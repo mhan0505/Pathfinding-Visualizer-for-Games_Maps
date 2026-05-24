@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: './', // 👈 Thêm dòng này để tải file tĩnh đúng trên GitHub Pages
+    base: '/Pathfinding-Visualizer-for-Games_Maps/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

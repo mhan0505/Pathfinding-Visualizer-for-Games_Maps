@@ -11,13 +11,13 @@ export default function Header() {
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl sm:text-3xl font-serif italic font-normal tracking-tight text-[#D4AF37]" id="app-title">
-              Trực Quan Hóa Tìm Đường
+              Pathfinding Visualizer
             </h1>
             <span className="text-[9px] uppercase tracking-widest text-[#888] border border-[#2A2A28] px-2 py-0.5 rounded font-mono bg-[#1A1A18]/60">
-              v2.4.0 STABLE
+              [DSEB-GROUP_5]
             </span>
           </div>
-          
+
           <p className="text-xs text-[#888] max-w-2xl leading-relaxed font-sans">
             Môi trường so sánh hiệu năng và phân tích trực quan tốc độ của các thuật toán lý thuyết đồ thị cổ điển:{' '}
             <span className="text-[#D4AF37]">Breadth-First Search (BFS)</span>,{' '}
@@ -31,7 +31,7 @@ export default function Header() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
             <span>MẠNG LƯỚI 2D CHUẨN</span>
           </div>
-          
+
           <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#1A1A18] border border-[#2A2A28] text-[10px] font-mono text-[#888]">
             <Sparkles className="w-3 h-3 text-[#D4AF37]" />
             <span>ĐỊA HÌNH TRỌNG SỐ</span>
