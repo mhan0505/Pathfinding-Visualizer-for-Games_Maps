@@ -1,0 +1,6 @@
+{
+  "name": "Pathfinding Visualizer",
+  "description": "Ứng dụng trực quan hóa và so sánh hiệu suất các thuật toán tìm đường BFS, DFS và Dijkstra trên lưới tương tác với tính năng tạo mê cung và vẽ địa hình có trọng số.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

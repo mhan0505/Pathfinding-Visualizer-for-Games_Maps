@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, Cambria, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #0A0A0A; /* Deep absolute matte dark requested by Sophisticated Dark */
+    color: #F2F2F0; /* Soft warm off-white */
+  }
+}
+
+/* Custom Grid Animations in Sophisticated Dark Theme */
+@keyframes nodeVisited {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(212, 175, 55, 0.15); /* Soft gold start */
+    border-radius: 100%;
+  }
+  50% {
+    background-color: rgba(140, 120, 80, 0.35); /* Elegant bronze */
+  }
+  75% {
+    transform: scale(1.08);
+    background-color: rgba(85, 80, 70, 0.65); /* Warm slate-gold */
+  }
+  100% {
+    transform: scale(1.0);
+    background-color: #2F2A22; /* Warm carbon-gold tint */
+    border-color: #4A4232;
+  }
+}
+
+@keyframes nodePath {
+  0% {
+    transform: scale(0.5);
+    background-color: rgba(212, 175, 55, 0.4);
+  }
+  50% {
+    transform: scale(1.15);
+    background-color: rgba(229, 195, 93, 0.85); /* Light gold transition */
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+  }
+  100% {
+    transform: scale(1.0);
+    background-color: #D4AF37; /* Royal gold */
+    border-color: #E5C35D;
+    color: #0A0A0A;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  }
+}
+
+@keyframes nodeWeightVisited {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(160, 140, 200, 0.2); 
+    border-radius: 50%;
+  }
+  75% {
+    transform: scale(1.1);
+    background-color: rgba(85, 70, 100, 0.6);
+  }
+  100% {
+    transform: scale(1.0);
+    background-color: #3E324A; /* Sophisticated warm purple tint */
+    border-color: #5C4A6E;
+  }
+}
+
+.node-visited {
+  animation-name: nodeVisited;
+  animation-duration: 1.0s;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+.node-weight-visited {
+  animation-name: nodeWeightVisited;
+  animation-duration: 1.0s;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+.node-shortest-path {
+  animation-name: nodePath;
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-delay: 0s;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+/* Sophisticated Dark panel styling */
+.glass-panel {
+  background: #141412; /* Warm carbon-black background */
+  border: 1px solid #2A2A28; /* Warm metallic-gray boundary */
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
