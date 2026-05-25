@@ -244,7 +244,7 @@ export default function ScenarioLab({
     {
       id: 'case1' as ScenarioId,
       title: 'TÌNH HUỐNG 1 — “Đường Ngắn nhưng cost cao ”',
-      badge: ' Địa hình Trọng số',
+      badge: ' Weighted Terrain',
       badgeColor: 'text-[#D4AF37] border-[#D4AF37]/35 bg-[#D4AF37]/10',
       description: 'Lưới chứa một đầm lầy sâu (hệ số cản = 10). BFS ưu tiên đi thẳng tuột xuyên qua đầm lầy vì tiết kiệm bước đi, trong khi Dijkstra luôn tối ưu hoá chi phí thực tế.',
       objective: 'Chứng minh BFS kém hiệu quả khi gặp với địa hình dốc/bùn lầy (đồ thị có trọng số), trong khi Dijkstra luôn tối ưu hóa chi phí thực tế.',
@@ -258,8 +258,8 @@ export default function ScenarioLab({
     },
     {
       id: 'case2' as ScenarioId,
-      title: 'TÌNH HUỐNG 2 — “Cạm Bẫy Ngõ Cụt của DFS”',
-      badge: 'Cạm bẫy Ngõ Cụt',
+      title: 'TÌNH HUỐNG 2 — “Mê Cung Ngõ Cụt Nguy Hiểm”',
+      badge: 'Maze with Deadlock',
       badgeColor: 'text-amber-500 border-amber-500/35 bg-amber-500/10',
       description: 'Hành lang dài nằm chắn ngang phía ưu tiên của DFS. Trong khi target nằm kề sát bên xuất phát chỉ 3 ô ở phía dưới .',
       objective: 'Show điểm yếu duyệt sâu bất chấp của DFS, khiến nó fail trong các mê cung có ngõ cụt.',
@@ -273,8 +273,8 @@ export default function ScenarioLab({
     },
     {
       id: 'case3' as ScenarioId,
-      title: 'TÌNH HUỐNG 3 — “ Mồi Nhử Trọng Số (Dijkstra Kém Hiệu Quả)”',
-      badge: 'Điểm Yếu Dijkstra',
+      title: 'TÌNH HUỐNG 3 — “ Dijkstra\'s Bait ”',
+      badge: 'Dijkstra\'s Bait',
       badgeColor: 'text-[#E53E3E] border-[#E53E3E]/35 bg-[#E53E3E]/10',
       description: 'Lối đi bên trái cực kỳ rộng mở và phẳng lặng (Cost = 1). Lối đi bên phải dẫn tới đích nhưng bị một đai bùn lầy dày đặc (Cost = 10) chắn ngang. Vì mải mê thám thính vùng cỏ phẳng chi phí rẻ phía sau lưng ngược hướng mục tiêu, Dijkstra sẽ bị lừa thám thính toàn bộ mạn trái trước khi lội bùn mạn phải.',
       objective: 'Chỉ ra nhược điểm chí mạng của Dijkstra (Tính tham lam trọng số thấp): Dễ dàng bị mồi nhử bởi vùng cỏ phẳng rộng lớn đi ngược hướng mục tiêu, trong khi BFS tìm thấy lối đi liên thông topo đơn giản cực kỳ nhanh chóng.',
@@ -648,7 +648,7 @@ export default function ScenarioLab({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#D4AF37] animate-pulse" />
-                <h5 className="text-xs font-bold uppercase tracking-wider text-white">Phòng Thí Nghiệm Đối Sánh Song Song</h5>
+                <h5 className="text-xs font-bold uppercase tracking-wider text-white">Lab Compare </h5>
               </div>
 
               {/* Lab controls */}
