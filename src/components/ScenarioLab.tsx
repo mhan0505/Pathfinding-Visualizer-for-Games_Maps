@@ -513,7 +513,7 @@ export default function ScenarioLab({
           <Compass className="w-5 h-5 text-[#D4AF37]" />
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">CASE ERRoR</h3>
-            <p className="text-[10px] text-[#888] font-mono mt-0.5">Màn hình thí nghiệm song song, trực quan hóa thời gian thực</p>
+            <p className="text-[10px] text-[#888] font-mono mt-0.5">compare failure cases visualizer</p>
           </div>
         </div>
 
@@ -569,7 +569,7 @@ export default function ScenarioLab({
                 {scen.badge}
               </span>
               <h4 className={`text-xs font-bold leading-snug ${currentScenario === scen.id ? 'text-[#D4AF37]' : 'text-slate-300'}`}>
-                {scen.id === 'case1' ? 'Case 1: Đi Bừa vs Đi Khôn' : scen.id === 'case2' ? 'Case 2: Cạm bẫy DFS' : 'Case 3: Cạnh Đơn'}
+                {scen.id === 'case1' ? 'Case 1: Failure Cases: BFS vs Dijkstra' : scen.id === 'case2' ? 'Case 2: Maze Trap: DFS vs BFS' : 'Case 3: Single Path: BFS vs Dijkstra'}
               </h4>
             </div>
             <p className="text-[10px] text-[#777] mt-2 line-clamp-2 leading-relaxed">
@@ -599,7 +599,7 @@ export default function ScenarioLab({
                 id="run-scenario-simulate-btn"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
-                <span>Xem Đấu Đối Kháng</span>
+                <span>View Comparison</span>
               </button>
 
               <button
@@ -610,7 +610,7 @@ export default function ScenarioLab({
                 title="Đồng bộ bản đồ kịch bản này xuống bãi cát chế độ đơn phía dưới"
               >
                 <Zap className="w-3 h-3 text-[#D4AF37]" />
-                <span>Nạp bản đồ lớn</span>
+                <span>View Map</span>
               </button>
             </div>
           </div>
