@@ -7,7 +7,7 @@ import GridRenderer from './components/GridRenderer';
 import ScenarioLab, { ScenarioId } from './components/ScenarioLab';
 
 import { GridNode, AlgorithmType, SpeedType, ToolMode, AlgorithmMetrics } from './types';
-import { bfs, dfs, dijkstra, getNodesInShortestPathOrder } from './utils/algorithms';
+import { bfs, dfs, dijkstra, astar, bestFirstSearch, getNodesInShortestPathOrder } from './utils/algorithms';
 import { generateRandomWalls, generateRecursiveDivision, generateSwampTerrain } from './utils/maze';
 
 const NUM_ROWS = 20;
@@ -32,6 +32,12 @@ export default function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [isRunningAll, setIsRunningAll] = useState(false);
   const [metricsList, setMetricsList] = useState<AlgorithmMetrics[]>([]);
+
+  // New pathfinding parameter states
+  const [heuristic, setHeuristic] = useState<'manhattan' | 'euclidean' | 'octile' | 'chebyshev'>('manhattan');
+  const [allowDiagonal, setAllowDiagonal] = useState(false);
+  const [dontCrossCorners, setDontCrossCorners] = useState(false);
+  const [weight, setWeight] = useState(1);
 
   // Mouse gestures drawing tracking
   const [isMousePressed, setIsMousePressed] = useState(false);
@@ -257,11 +263,15 @@ export default function App() {
     let visitedOrdered: GridNode[] = [];
 
     if (selectedAlgo === 'bfs') {
-      visitedOrdered = bfs(gridForSearch, startNode, endNode);
+      visitedOrdered = bfs(gridForSearch, startNode, endNode, allowDiagonal, dontCrossCorners);
     } else if (selectedAlgo === 'dfs') {
-      visitedOrdered = dfs(gridForSearch, startNode, endNode);
+      visitedOrdered = dfs(gridForSearch, startNode, endNode, allowDiagonal, dontCrossCorners);
     } else if (selectedAlgo === 'dijkstra') {
-      visitedOrdered = dijkstra(gridForSearch, startNode, endNode);
+      visitedOrdered = dijkstra(gridForSearch, startNode, endNode, allowDiagonal, dontCrossCorners);
+    } else if (selectedAlgo === 'astar') {
+      visitedOrdered = astar(gridForSearch, startNode, endNode, heuristic, allowDiagonal, dontCrossCorners, weight);
+    } else if (selectedAlgo === 'bestfirst') {
+      visitedOrdered = bestFirstSearch(gridForSearch, startNode, endNode, heuristic, allowDiagonal, dontCrossCorners);
     }
 
     const endTime = performance.now();
@@ -404,15 +414,17 @@ export default function App() {
       pathFound: boolean;
     }
   ) => {
-    const names = {
+    const names: Record<AlgorithmType, string> = {
       bfs: 'Breadth-First Search (BFS)',
       dfs: 'Depth-First Search (DFS)',
-      dijkstra: "Thuật toán Dijkstra"
+      dijkstra: 'Thuật toán Dijkstra',
+      astar: 'Thuật toán A*',
+      bestfirst: 'Duyệt tham lam Heuristic'
     };
 
     const isOptimal = algoId === 'bfs' 
       ? isGridUnweighted() // BFS optimal if uniform grid
-      : algoId === 'dijkstra';
+      : (algoId === 'dijkstra' || (algoId === 'astar' && weight <= 1));
 
     const newMetric: AlgorithmMetrics = {
       algorithmId: algoId,
@@ -454,7 +466,7 @@ export default function App() {
 
     setTimeout(() => {
       const results: AlgorithmMetrics[] = [];
-      const algos: AlgorithmType[] = ['bfs', 'dfs', 'dijkstra'];
+      const algos: AlgorithmType[] = ['bfs', 'dfs', 'dijkstra', 'astar', 'bestfirst'];
 
       for (const algo of algos) {
         // Clone grid separately for calculation
@@ -473,11 +485,15 @@ export default function App() {
           const iterEnd = iterGrid[endCoords.row][endCoords.col];
           
           if (algo === 'bfs') {
-            visitedOrdered = bfs(iterGrid, iterStart, iterEnd);
+            visitedOrdered = bfs(iterGrid, iterStart, iterEnd, allowDiagonal, dontCrossCorners);
           } else if (algo === 'dfs') {
-            visitedOrdered = dfs(iterGrid, iterStart, iterEnd);
-          } else {
-            visitedOrdered = dijkstra(iterGrid, iterStart, iterEnd);
+            visitedOrdered = dfs(iterGrid, iterStart, iterEnd, allowDiagonal, dontCrossCorners);
+          } else if (algo === 'dijkstra') {
+            visitedOrdered = dijkstra(iterGrid, iterStart, iterEnd, allowDiagonal, dontCrossCorners);
+          } else if (algo === 'astar') {
+            visitedOrdered = astar(iterGrid, iterStart, iterEnd, heuristic, allowDiagonal, dontCrossCorners, weight);
+          } else if (algo === 'bestfirst') {
+            visitedOrdered = bestFirstSearch(iterGrid, iterStart, iterEnd, heuristic, allowDiagonal, dontCrossCorners);
           }
         }
 
@@ -486,11 +502,15 @@ export default function App() {
 
         // Run one last tracking state to extract shortest path
         if (algo === 'bfs') {
-          visitedOrdered = bfs(localGrid, localStart, localEnd);
+          visitedOrdered = bfs(localGrid, localStart, localEnd, allowDiagonal, dontCrossCorners);
         } else if (algo === 'dfs') {
-          visitedOrdered = dfs(localGrid, localStart, localEnd);
-        } else {
-          visitedOrdered = dijkstra(localGrid, localStart, localEnd);
+          visitedOrdered = dfs(localGrid, localStart, localEnd, allowDiagonal, dontCrossCorners);
+        } else if (algo === 'dijkstra') {
+          visitedOrdered = dijkstra(localGrid, localStart, localEnd, allowDiagonal, dontCrossCorners);
+        } else if (algo === 'astar') {
+          visitedOrdered = astar(localGrid, localStart, localEnd, heuristic, allowDiagonal, dontCrossCorners, weight);
+        } else if (algo === 'bestfirst') {
+          visitedOrdered = bestFirstSearch(localGrid, localStart, localEnd, heuristic, allowDiagonal, dontCrossCorners);
         }
 
         const finalPathNode = localGrid[endCoords.row][endCoords.col];
@@ -502,15 +522,17 @@ export default function App() {
           ? shortestPath.reduce((acc, curr) => acc + (curr.isStart ? 0 : curr.weight), 0)
           : Infinity;
 
-        const names = {
+        const names: Record<AlgorithmType, string> = {
           bfs: 'Breadth-First Search (BFS)',
           dfs: 'Depth-First Search (DFS)',
-          dijkstra: "Thuật toán Dijkstra"
+          dijkstra: 'Thuật toán Dijkstra',
+          astar: 'Thuật toán A*',
+          bestfirst: 'Duyệt tham lam Heuristic'
         };
 
         const isOptimal = algo === 'bfs' 
           ? isGridUnweighted()
-          : algo === 'dijkstra';
+          : (algo === 'dijkstra' || (algo === 'astar' && weight <= 1));
 
         results.push({
           algorithmId: algo,
@@ -804,6 +826,14 @@ export default function App() {
               onGenerateSwampTerrain={handleSwampTerrainGen}
               wallDensity={wallDensity}
               onChangeWallDensity={setWallDensity}
+              heuristic={heuristic}
+              onChangeHeuristic={setHeuristic}
+              allowDiagonal={allowDiagonal}
+              onChangeAllowDiagonal={setAllowDiagonal}
+              dontCrossCorners={dontCrossCorners}
+              onChangeDontCrossCorners={setDontCrossCorners}
+              weight={weight}
+              onChangeWeight={setWeight}
             />
           </div>
 

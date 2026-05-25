@@ -30,6 +30,16 @@ interface ControlPanelProps {
   onGenerateSwampTerrain: () => void;
   wallDensity: number;
   onChangeWallDensity: (density: number) => void;
+
+  // New pathfinding parameters
+  heuristic: 'manhattan' | 'euclidean' | 'octile' | 'chebyshev';
+  onChangeHeuristic: (heuristic: 'manhattan' | 'euclidean' | 'octile' | 'chebyshev') => void;
+  allowDiagonal: boolean;
+  onChangeAllowDiagonal: (allow: boolean) => void;
+  dontCrossCorners: boolean;
+  onChangeDontCrossCorners: (allow: boolean) => void;
+  weight: number;
+  onChangeWeight: (weight: number) => void;
 }
 
 export default function ControlPanel({
@@ -48,6 +58,14 @@ export default function ControlPanel({
   onGenerateSwampTerrain,
   wallDensity,
   onChangeWallDensity,
+  heuristic,
+  onChangeHeuristic,
+  allowDiagonal,
+  onChangeAllowDiagonal,
+  dontCrossCorners,
+  onChangeDontCrossCorners,
+  weight,
+  onChangeWeight,
 }: ControlPanelProps) {
   return (
     <div className="bg-[#141412] rounded-xl p-6 border border-[#2A2A28] space-y-6" id="control-panel">
@@ -118,9 +136,11 @@ export default function ControlPanel({
             className="w-full bg-[#1A1A18] border border-[#D4AF37] rounded p-2.5 text-xs text-[#F2F2F0] font-sans font-medium outline-none focus:ring-1 focus:ring-[#D4AF37] transition-colors disabled:opacity-50"
             id="algo-select"
           >
+            <option value="astar">A* Search (Thuật toán tìm đường A*)</option>
+            <option value="bestfirst">Best-First Search (Duyệt tham lam Heuristic)</option>
+            <option value="dijkstra">Dijkstra (Tìm đường theo Trọng số thực tế)</option>
             <option value="bfs">Breadth-First Search (Duyệt theo chiều rộng)</option>
             <option value="dfs">Depth-First Search (Duyệt theo chiều sâu)</option>
-            <option value="dijkstra">Dijkstra (Tìm đường có Hệ số Trọng số)</option>
           </select>
         </div>
 
@@ -148,6 +168,107 @@ export default function ControlPanel({
           </div>
         </div>
       </div>
+
+      {/* Advanced Parameters for Pathfinding Heuristics and Options */}
+      {!isRunning && (selectedAlgo === 'astar' || selectedAlgo === 'bestfirst' || selectedAlgo === 'dijkstra' || selectedAlgo === 'bfs') && (
+        <div className="bg-[#0D0D0D]/60 border border-[#2A2A28] rounded-lg p-4 space-y-4 pt-3 animate-fade-in font-sans">
+          {/* HEURISTIC SELECTOR */}
+          {(selectedAlgo === 'astar' || selectedAlgo === 'bestfirst') && (
+            <div className="space-y-2">
+              <span className="text-[10px] uppercase tracking-widest text-[#888] font-mono block font-bold">
+                Khoảng cách ước lượng (Heuristic)
+              </span>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {([
+                  { id: 'manhattan', name: 'Manhattan' },
+                  { id: 'euclidean', name: 'Euclidean' },
+                  { id: 'octile', name: 'Octile' },
+                  { id: 'chebyshev', name: 'Chebyshev' }
+                ] as const).map((h) => (
+                  <label
+                    key={h.id}
+                    className={`flex items-center gap-2 p-2 rounded border cursor-pointer select-none transition-colors ${
+                      heuristic === h.id
+                        ? 'bg-[#1D1A15] border-[#D4AF37]/50 text-[#D4AF37]'
+                        : 'bg-[#1A1A18]/40 border-[#2A2A28] text-slate-400 hover:bg-[#20201E]'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="heuristic"
+                      value={h.id}
+                      checked={heuristic === h.id}
+                      onChange={() => onChangeHeuristic(h.id)}
+                      className="accent-[#D4AF37]"
+                    />
+                    <span>{h.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ADVANCED CHECKBOXES */}
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase tracking-widest text-[#888] font-mono block font-bold">
+              Tùy chọn di chuyển (Options)
+            </span>
+            
+            <div className="space-y-2.5 text-xs text-slate-300">
+              {/* Allow Diagonal */}
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={allowDiagonal}
+                  onChange={(e) => {
+                    onChangeAllowDiagonal(e.target.checked);
+                    if (!e.target.checked) {
+                      onChangeDontCrossCorners(false);
+                    }
+                  }}
+                  className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0 accent-[#D4AF37]"
+                />
+                <span>Cho phép di chuyển chéo (Allow Diagonal)</span>
+              </label>
+
+              {/* Don't Cross Corners */}
+              <label
+                className={`flex items-center gap-2.5 select-none transition-opacity ${
+                  allowDiagonal ? 'cursor-pointer' : 'opacity-40 cursor-not-allowed'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={dontCrossCorners}
+                  disabled={!allowDiagonal}
+                  onChange={(e) => onChangeDontCrossCorners(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#D4AF37] focus:ring-0 accent-[#D4AF37] disabled:opacity-40"
+                />
+                <span>Không băng góc chéo tường (Don't Cross Corners)</span>
+              </label>
+
+              {/* Heuristic Weight Input (Only for A*) */}
+              {selectedAlgo === 'astar' && (
+                <div className="flex items-center gap-3 pt-2 border-t border-[#2A2A28]/40 mt-1">
+                  <span className="text-[11px] text-slate-400">Trọng số Heuristic (Weight):</span>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.5"
+                    value={weight}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      onChangeWeight(isNaN(val) ? 1 : val);
+                    }}
+                    className="w-16 bg-[#1A1A18] border border-[#2A2A28] text-center text-xs text-[#D4AF37] rounded py-1 px-1.5 focus:border-[#D4AF37] focus:ring-0 font-mono outline-none"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. Drawing Brushes / Tools */}
       <div className="space-y-3 pt-2 border-t border-[#2A2A28]">

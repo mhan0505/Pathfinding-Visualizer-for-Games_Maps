@@ -11,7 +11,7 @@ export interface GridNode {
   previousNode: GridNode | null;
 }
 
-export type AlgorithmType = 'bfs' | 'dfs' | 'dijkstra';
+export type AlgorithmType = 'bfs' | 'dfs' | 'dijkstra' | 'astar' | 'bestfirst';
 
 export type SpeedType = 'fast' | 'medium' | 'slow';
 

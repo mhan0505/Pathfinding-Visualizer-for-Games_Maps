@@ -154,8 +154,8 @@ export default function ScenarioLab({
 }: ScenarioLabProps) {
   const legendItems = [
     {
-      label: 'Điểm Bắt Đầu',
-      description: 'Gốc tọa độ xuất phát (Dấu mốc #D4AF37)',
+      label: 'Điểm Start',
+      description: 'Tọa độ start',
       badge: (
         <div className="w-5 h-5 rounded bg-[#D4AF37] flex items-center justify-center border border-[#E5C35D] shadow-md shrink-0">
           <Flag className="w-2.5 h-2.5 text-[#0A0A0A] fill-[#0A0A0A]" />
@@ -163,8 +163,8 @@ export default function ScenarioLab({
       ),
     },
     {
-      label: 'Điểm Đích',
-      description: 'Tọa độ đích kết thúc (Trắng tinh khiết)',
+      label: 'Điểm Target',
+      description: 'Tọa độ target',
       badge: (
         <div className="w-5 h-5 rounded bg-white flex items-center justify-center border border-slate-300 shadow-md shrink-0">
           <Target className="w-2.5 h-2.5 text-[#0A0A0A]" />
@@ -179,7 +179,7 @@ export default function ScenarioLab({
       ),
     },
     {
-      label: 'Terrain Sình lầy (Hệ số: 5)',
+      label: 'Đầm lầy (Trọng số: 5)',
       description: 'Lực cản trung bình, tốn 5 lượt',
       badge: (
         <div className="w-5 h-5 rounded bg-[#3D2C1E]/90 border border-[#5C4533] text-[#D4AF37] font-mono text-[9px] flex items-center justify-center font-bold shrink-0">
@@ -188,8 +188,8 @@ export default function ScenarioLab({
       ),
     },
     {
-      label: 'Hồ nước sâu (Hệ số: 10)',
-      description: 'Lực cản gập ghềnh cao, tốn 10 lượt',
+      label: 'Hồ nước sâu (Trọng số: 10)',
+      description: 'Lực cản cao, tốn 10 lượt',
       badge: (
         <div className="w-5 h-5 rounded bg-[#1C2030]/90 border border-[#2B3554] text-cyan-400 font-mono text-[8px] flex items-center justify-center font-bold shrink-0">
           10
@@ -244,7 +244,7 @@ export default function ScenarioLab({
     {
       id: 'case1' as ScenarioId,
       title: 'TÌNH HUỐNG 1 — “Đường Ngắn nhưng cost cao ”',
-      badge: 'Trọng số Địa hình',
+      badge: ' Địa hình Trọng số',
       badgeColor: 'text-[#D4AF37] border-[#D4AF37]/35 bg-[#D4AF37]/10',
       description: 'Lưới chứa một đầm lầy sâu (hệ số cản = 10). BFS ưu tiên đi thẳng tuột xuyên qua đầm lầy vì tiết kiệm bước đi, trong khi Dijkstra luôn tối ưu hoá chi phí thực tế.',
       objective: 'Chứng minh BFS kém hiệu quả khi gặp với địa hình dốc/bùn lầy (đồ thị có trọng số), trong khi Dijkstra luôn tối ưu hóa chi phí thực tế.',
@@ -259,30 +259,30 @@ export default function ScenarioLab({
     {
       id: 'case2' as ScenarioId,
       title: 'TÌNH HUỐNG 2 — “Cạm Bẫy Ngõ Cụt của DFS”',
-      badge: 'Cạm bẫy Hành lang',
+      badge: 'Cạm bẫy Ngõ Cụt',
       badgeColor: 'text-amber-500 border-amber-500/35 bg-amber-500/10',
-      description: 'Hầm ngõ cụt siêu sâu nằm chắn ngang mạn sườn ưu tiên của DFS. Trong khi lối thoát hiểm khẩn cấp nằm kề sát bên xuất phát chỉ 3 ô ở hướng ngược lại.',
-      objective: 'Lột trần điểm yếu duyệt sâu bất chấp của DFS, biến nó thành nạn nhân dễ dàng của các cạm bẫy hành lang mồi nhử dài vô hạn.',
+      description: 'Hành lang dài nằm chắn ngang phía ưu tiên của DFS. Trong khi target nằm kề sát bên xuất phát chỉ 3 ô ở phía dưới .',
+      objective: 'Show điểm yếu duyệt sâu bất chấp của DFS, khiến nó fail trong các mê cung có ngõ cụt.',
       leftAlgo: 'DFS',
       rightAlgo: 'BFS',
       expected: [
-        { algo: 'DFS (Bên Trái)', result: 'Hăm hở chui lọt tận đáy sâu ngõ cụt', status: 'Tốn hàng trăm bước thu dọn ngăn xếp trong ngơ ngác' },
-        { algo: 'BFS (Mạn Phải)', result: 'Quét vòm đồng tâm kề cận tức khắc', status: 'Ẵm trọn chiến thắng sinh tồn chỉ sau 3 bước duyệt gọn!' }
+        { algo: 'DFS (left)', result: 'Đi thẳng qua ngõ cụt', status: 'Tốn nhiều bước đi' },
+        { algo: 'BFS (right)', result: ' đi theo đường vòng ngắn nhất', status: 'đi ít bước hơn DFS' }
       ],
       insight: 'DFS ưu tiên vét cạn chiều dọc nhánh. Ở các mê cung chứa nhánh cụt dài và đích nằm sát điểm xuất phát, DFS hoạt động cực tệ hại.'
     },
     {
       id: 'case3' as ScenarioId,
-      title: 'TÌNH HUỐNG 3 — “Cạm Bẫy Mồi Nhử Trọng Số (Dijkstra Kém Hiệu Quả)”',
+      title: 'TÌNH HUỐNG 3 — “ Mồi Nhử Trọng Số (Dijkstra Kém Hiệu Quả)”',
       badge: 'Điểm Yếu Dijkstra',
       badgeColor: 'text-[#E53E3E] border-[#E53E3E]/35 bg-[#E53E3E]/10',
-      description: 'Lối đi bên trái cực kỳ rộng mở và phẳng lặng (Cost = 1). Lối đi bên phải dẫn tới đích nhưng bị một đai bùn lầy dày đặc (Cost = 10) chắn ngang. Vì mải mê thám thính vùng cỏ phẳng chi phí rẻ phía sau lưng ngược hướng mục tiêu, Dijkstra sẽ bị lừa thám thính sạch bách mạn trái trước khi lội bùn mạn phải.',
+      description: 'Lối đi bên trái cực kỳ rộng mở và phẳng lặng (Cost = 1). Lối đi bên phải dẫn tới đích nhưng bị một đai bùn lầy dày đặc (Cost = 10) chắn ngang. Vì mải mê thám thính vùng cỏ phẳng chi phí rẻ phía sau lưng ngược hướng mục tiêu, Dijkstra sẽ bị lừa thám thính toàn bộ mạn trái trước khi lội bùn mạn phải.',
       objective: 'Chỉ ra nhược điểm chí mạng của Dijkstra (Tính tham lam trọng số thấp): Dễ dàng bị mồi nhử bởi vùng cỏ phẳng rộng lớn đi ngược hướng mục tiêu, trong khi BFS tìm thấy lối đi liên thông topo đơn giản cực kỳ nhanh chóng.',
       leftAlgo: 'BFS',
       rightAlgo: 'Dijkstra',
       expected: [
-        { algo: 'BFS (Bên Trái)', result: 'Lội thẳng xuyên đai bùn lầy về đích tức khắc', status: 'Chỉ thám thính một số lượng ô cực nhỏ hình kim cương' },
-        { algo: 'Dijkstra (Mạn Phải)', result: 'Bị mê hoặc thám thính sạch bách mạn trái', status: 'Duyệt hơn 400 ô vô nghĩa ngược hướng trước khi chịu vượt bùn!' }
+        { algo: 'BFS (left)', result: 'đi thẳng bỏ qua trọng số', status: 'Đi ít bước hơn ' },
+        { algo: 'Dijkstra (right)', result: 'đi đường vòng ', status: 'đi nhiều bước hơn ' }
       ],
       insight: 'Khi chỉ cần tìm đường khả thi hoặc khi phân bổ trọng số chênh lệch lớn dẫn dụ sai hướng mục tiêu, Dijkstra tốn hàng trăm lượt duyệt thừa thãi vào vùng "mồi nhử giá rẻ" so với BFS.'
     }
