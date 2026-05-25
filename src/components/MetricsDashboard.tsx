@@ -76,8 +76,8 @@ export default function MetricsDashboard({
             onClick={onTriggerCompare}
             disabled={isRunningAll}
             className={`px-4 py-2 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${isRunningAll
-                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                : 'bg-[#D4AF37] text-black hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 active:scale-95'
+              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+              : 'bg-[#D4AF37] text-black hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 active:scale-95'
               }`}
             id="trigger-compare-btn"
           >
@@ -169,7 +169,7 @@ export default function MetricsDashboard({
             {/* Chart 2: Cost of Path found */}
             <div className="bg-[#0D0D0D] p-4 rounded border border-[#2A2A28]">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[#888] block mb-3 font-mono">
-                Khái toán tổng lực cản/độ dài của đường đi tìm thấy
+                total cost of path found
               </span>
               <div className="space-y-3">
                 {metricsList.map(item => {
