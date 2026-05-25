@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Compass, Sparkles } from 'lucide-react';
 
+const CORNER_GIFS = [
+  "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWgzeDY3M2lwanlvdm1zMTR5azVpcXk4amtsb3pzOHVma25yb2YwOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LPFNd1AJBoYcVUExmE/giphy.gif",
+
+];
+
 export default function Header() {
+  const [gifIndex, setGifIndex] = useState(0);
+
+  const nextCornerGif = () => {
+    setGifIndex((prevIndex) => (prevIndex + 1) % CORNER_GIFS.length);
+  };
+
   return (
     <header className="relative overflow-hidden rounded-xl bg-[#141412] p-6 sm:p-7 mb-6 border border-[#2A2A28] shadow-2xl" id="app-header">
       {/* Decorative refined radial gradient background */}
@@ -14,7 +25,7 @@ export default function Header() {
               Pathfinding Visualizer
             </h1>
             <span className="text-[9px] uppercase tracking-widest text-[#888] border border-[#2A2A28] px-2 py-0.5 rounded font-mono bg-[#1A1A18]/60">
-              [DSEB-GROUP_5]
+              [GROUP_5]
             </span>
           </div>
 
@@ -29,12 +40,19 @@ export default function Header() {
         <div className="flex flex-wrap gap-2 items-center">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#1A1A18] border border-[#2A2A28] text-[10px] font-mono text-[#D4AF37]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
-            <span>MẠNG LƯỚI 2D CHUẨN</span>
+            <span>DSEB</span>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#1A1A18] border border-[#2A2A28] text-[10px] font-mono text-[#888]">
-            <Sparkles className="w-3 h-3 text-[#D4AF37]" />
-            <span>ĐỊA HÌNH TRỌNG SỐ</span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded bg-[#1A1A18] border border-[#2A2A28] text-[10px] font-mono text-[#888] select-none">
+
+            <span className="flex items-center gap-1.5 cursor-pointer" onClick={nextCornerGif}>
+              <img
+                src={CORNER_GIFS[gifIndex]}
+                alt="Mini Corner GIF"
+                className="w-10 h-10 rounded object-cover border border-[#2A2A28] transition-all duration-300 hover:scale-125"
+              />
+              <span className="hover:text-[#D4AF37] transition-colors"></span>
+            </span>
           </div>
         </div>
       </div>
