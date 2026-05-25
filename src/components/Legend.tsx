@@ -67,9 +67,9 @@ export default function Legend() {
       {/* Left side: Sleek title */}
       <div className="flex items-center gap-2 shrink-0">
         <Circle className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]/20 animate-pulse" />
-        <span className="text-[11px] font-bold uppercase tracking-widest text-[#888] font-mono">Ký hiệu bản đồ</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest text-[#888] font-mono">symbol</span>
       </div>
-      
+
       {/* Right side: Flex row of compact blocks */}
       <div className="flex flex-wrap items-center gap-3">
         {legendItems.map((item, index) => (
@@ -78,13 +78,13 @@ export default function Legend() {
             <div className="cursor-help transition-all duration-300 hover:scale-110 active:scale-95">
               {item.badge}
             </div>
-            
+
             {/* Beautiful Custom Tooltip */}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 w-44 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 transform scale-90 translate-y-1 group-hover:scale-100 group-hover:translate-y-0 z-50">
               <div className="bg-[#181816] border border-[#3E3E3B] text-[#F2F2F0] px-2.5 py-1.5 rounded-md shadow-2xl text-center relative flex flex-col items-center">
                 <span className="font-bold text-[#D4AF37] text-[10px] uppercase tracking-wider block">{item.label}</span>
                 <span className="text-[9px] text-[#A0A09B] mt-0.5 leading-normal block font-medium">{item.description}</span>
-                
+
                 {/* Tooltip Down Arrow */}
                 <div className="w-1.5 h-1.5 bg-[#181816] border-r border-b border-[#3E3E3B] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
               </div>

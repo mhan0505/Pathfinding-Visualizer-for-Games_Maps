@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
-import Legend from './components/Legend';
 import AlgorithmInfo from './components/AlgorithmInfo';
 import MetricsDashboard from './components/MetricsDashboard';
 import ControlPanel from './components/ControlPanel';
@@ -749,9 +748,6 @@ export default function App() {
         
         {/* Title Header Section */}
         <Header />
-
-        {/* Dynamic Map Legend Indicators */}
-        <Legend />
 
         {/* Lab Đối Kháng Tình Huống */}
         <ScenarioLab

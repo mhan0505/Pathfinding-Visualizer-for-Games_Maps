@@ -11,7 +11,9 @@ import {
   CheckCircle,
   AlertTriangle,
   Info,
-  ChevronRight
+  ChevronRight,
+  Flag,
+  Target
 } from 'lucide-react';
 import { GridNode, AlgorithmType } from '../types';
 import { bfs, dfs, dijkstra, getNodesInShortestPathOrder } from '../utils/algorithms';
@@ -100,7 +102,7 @@ const getScenarioSetupLocal = (id: ScenarioId) => {
 // Sub-component for small visualizer grids
 function CompactGrid({ grid, algoType }: { grid: GridNode[][]; algoType: string }) {
   const cols = grid[0]?.length || 0;
-  
+
   const getNodeClassName = (node: GridNode) => {
     const { isStart, isEnd, isWall, isVisited, isPath, weight } = node;
     if (isStart) return 'bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.9)] z-10 animate-pulse scale-[1.05] rounded-[2px]';
@@ -126,7 +128,7 @@ function CompactGrid({ grid, algoType }: { grid: GridNode[][]; algoType: string 
 
   return (
     <div className="overflow-x-auto w-full p-2 bg-[#080807] border border-[#1C1C1A] rounded p-1.5 flex justify-center">
-      <div 
+      <div
         className="grid gap-[1px] select-none min-w-[320px] max-w-full"
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
       >
@@ -150,6 +152,66 @@ export default function ScenarioLab({
   onRunScenario,
   isRunning
 }: ScenarioLabProps) {
+  const legendItems = [
+    {
+      label: 'Điểm Bắt Đầu',
+      description: 'Gốc tọa độ xuất phát (Dấu mốc #D4AF37)',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#D4AF37] flex items-center justify-center border border-[#E5C35D] shadow-md shrink-0">
+          <Flag className="w-2.5 h-2.5 text-[#0A0A0A] fill-[#0A0A0A]" />
+        </div>
+      ),
+    },
+    {
+      label: 'Điểm Đích',
+      description: 'Tọa độ đích kết thúc (Trắng tinh khiết)',
+      badge: (
+        <div className="w-5 h-5 rounded bg-white flex items-center justify-center border border-slate-300 shadow-md shrink-0">
+          <Target className="w-2.5 h-2.5 text-[#0A0A0A]" />
+        </div>
+      ),
+    },
+    {
+      label: 'Tường rào / Vật Cản',
+      description: 'Vật cản thạch bản vô hướng',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#2A2A28] border border-[#444] shadow-sm shrink-0" />
+      ),
+    },
+    {
+      label: 'Terrain Sình lầy (Hệ số: 5)',
+      description: 'Lực cản trung bình, tốn 5 lượt',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#3D2C1E]/90 border border-[#5C4533] text-[#D4AF37] font-mono text-[9px] flex items-center justify-center font-bold shrink-0">
+          5
+        </div>
+      ),
+    },
+    {
+      label: 'Hồ nước sâu (Hệ số: 10)',
+      description: 'Lực cản gập ghềnh cao, tốn 10 lượt',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#1C2030]/90 border border-[#2B3554] text-cyan-400 font-mono text-[8px] flex items-center justify-center font-bold shrink-0">
+          10
+        </div>
+      ),
+    },
+    {
+      label: 'Nút đã khảo sát',
+      description: 'Đỉnh đồ thị đã duyệt qua',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#2F2A22] border border-[#4A4232] shrink-0" />
+      ),
+    },
+    {
+      label: 'Đường đi tối ưu',
+      description: 'Quỹ đạo di chuyển tối ưu',
+      badge: (
+        <div className="w-5 h-5 rounded bg-[#D4AF37] border border-[#E5C35D] shadow-[0_0_6px_rgba(212,175,55,0.4)] shrink-0" />
+      ),
+    },
+  ];
+
   // Dual-view grid states for side-by-side simulation
   const [leftGrid, setLeftGrid] = useState<GridNode[][] | null>(null);
   const [rightGrid, setRightGrid] = useState<GridNode[][] | null>(null);
@@ -219,8 +281,8 @@ export default function ScenarioLab({
       leftAlgo: 'BFS',
       rightAlgo: 'Dijkstra',
       expected: [
-         { algo: 'BFS (Bên Trái)', result: 'Lội thẳng xuyên đai bùn lầy về đích tức khắc', status: 'Chỉ thám thính một số lượng ô cực nhỏ hình kim cương' },
-         { algo: 'Dijkstra (Mạn Phải)', result: 'Bị mê hoặc thám thính sạch bách mạn trái', status: 'Duyệt hơn 400 ô vô nghĩa ngược hướng trước khi chịu vượt bùn!' }
+        { algo: 'BFS (Bên Trái)', result: 'Lội thẳng xuyên đai bùn lầy về đích tức khắc', status: 'Chỉ thám thính một số lượng ô cực nhỏ hình kim cương' },
+        { algo: 'Dijkstra (Mạn Phải)', result: 'Bị mê hoặc thám thính sạch bách mạn trái', status: 'Duyệt hơn 400 ô vô nghĩa ngược hướng trước khi chịu vượt bùn!' }
       ],
       insight: 'Khi chỉ cần tìm đường khả thi hoặc khi phân bổ trọng số chênh lệch lớn dẫn dụ sai hướng mục tiêu, Dijkstra tốn hàng trăm lượt duyệt thừa thãi vào vùng "mồi nhử giá rẻ" so với BFS.'
     }
@@ -269,7 +331,7 @@ export default function ScenarioLab({
     }, 150);
 
     const { start, end, newGrid } = getScenarioSetupLocal(currentScenario);
-    
+
     let leftAlgoType: AlgorithmType = 'bfs';
     let rightAlgoType: AlgorithmType = 'dijkstra';
 
@@ -305,13 +367,13 @@ export default function ScenarioLab({
     // Trace shortest path results
     const pathLeft = getNodesInShortestPathOrder(leftEndNode);
     const pathLeftFound = pathLeft.length > 0 && pathLeft[0].isStart;
-    const pathLeftCost = pathLeftFound 
+    const pathLeftCost = pathLeftFound
       ? pathLeft.reduce((acc, curr) => acc + (curr.isStart ? 0 : curr.weight), 0)
       : Infinity;
 
     const pathRight = getNodesInShortestPathOrder(rightEndNode);
     const pathRightFound = pathRight.length > 0 && pathRight[0].isStart;
-    const pathRightCost = pathRightFound 
+    const pathRightCost = pathRightFound
       ? pathRight.reduce((acc, curr) => acc + (curr.isStart ? 0 : curr.weight), 0)
       : Infinity;
 
@@ -319,7 +381,7 @@ export default function ScenarioLab({
     setComparisonStep(0);
 
     let step = 0;
-    
+
     // Fine-tune timing rates & step gaps
     let intervalMs = 28;
     let stepIncr = 1;
@@ -345,7 +407,7 @@ export default function ScenarioLab({
       // --- Left agent update ---
       const nextLeftGrid = newGrid.map(row => row.map(node => ({ ...node })));
       const leftVisitedCount = Math.min(step, visitedLeft.length);
-      
+
       for (let i = 0; i < leftVisitedCount; i++) {
         const node = visitedLeft[i];
         if (!node.isStart && !node.isEnd) {
@@ -378,7 +440,7 @@ export default function ScenarioLab({
       // --- Right agent update ---
       const nextRightGrid = newGrid.map(row => row.map(node => ({ ...node })));
       const rightVisitedCount = Math.min(step, visitedRight.length);
-      
+
       for (let i = 0; i < rightVisitedCount; i++) {
         const node = visitedRight[i];
         if (!node.isStart && !node.isEnd) {
@@ -439,17 +501,47 @@ export default function ScenarioLab({
 
   return (
     <div className="bg-[#141412] rounded-xl p-6 border border-[#2A2A28] flex flex-col h-full shadow-2xl" id="scenario-lab-container">
-      <div className="flex items-center gap-2 mb-4 border-b border-[#2A2A28] pb-4 justify-between">
+      <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-4 border-b border-[#2A2A28] pb-4 justify-between">
         <div className="flex items-center gap-2.5">
           <Compass className="w-5 h-5 text-[#D4AF37]" />
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Lab Đối Kháng Kịch Bản</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">CASE ERRoR</h3>
             <p className="text-[10px] text-[#888] font-mono mt-0.5">Màn hình thí nghiệm song song, trực quan hóa thời gian thực</p>
           </div>
         </div>
-        <span className="text-[9px] uppercase tracking-widest text-[#D4AF37] border border-[#D4AF37]/20 px-2 py-0.5 rounded font-mono bg-[#D4AF37]/5">
-          LAB VERSION 2.5
-        </span>
+
+        {/* Legend Symbols + Version Badge Container */}
+        <div className="flex items-center gap-3.5 flex-wrap">
+          {/* Symbols Block */}
+          <div className="flex items-center gap-2 bg-[#1A1A18]/60 border border-[#2A2A28] px-3 py-1.5 rounded-lg">
+            <span className="text-[9px] uppercase tracking-wider text-[#666] font-mono font-bold mr-1">Symbol:</span>
+            <div className="flex items-center gap-1.5">
+              {legendItems.map((item, index) => (
+                <div key={index} className="relative group">
+                  {/* Interactive Badge Block */}
+                  <div className="cursor-help transition-all duration-300 hover:scale-110 active:scale-95">
+                    {item.badge}
+                  </div>
+
+                  {/* Custom Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 w-44 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 transform scale-90 translate-y-1 group-hover:scale-100 group-hover:translate-y-0 z-50">
+                    <div className="bg-[#181816] border border-[#3E3E3B] text-[#F2F2F0] px-2.5 py-1.5 rounded-md shadow-2xl text-center relative flex flex-col items-center">
+                      <span className="font-bold text-[#D4AF37] text-[10px] uppercase tracking-wider block">{item.label}</span>
+                      <span className="text-[9px] text-[#A0A09B] mt-0.5 leading-normal block font-medium">{item.description}</span>
+                      {/* Tooltip Down Arrow */}
+                      <div className="w-1.5 h-1.5 bg-[#181816] border-r border-b border-[#3E3E3B] rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Version Badge */}
+          <span className="text-[9px] uppercase tracking-widest text-[#D4AF37] border border-[#D4AF37]/20 px-2.5 py-1 rounded font-mono bg-[#D4AF37]/5 shrink-0">
+            LAB VERSION 2.5
+          </span>
+        </div>
       </div>
 
       {/* Grid of case selectors */}
@@ -459,11 +551,10 @@ export default function ScenarioLab({
             key={scen.id}
             onClick={() => onSelectScenario(scen.id)}
             disabled={isRunning || isComparisonAnimating}
-            className={`p-4 rounded-lg border text-left cursor-pointer transition-all flex flex-col justify-between ${
-              currentScenario === scen.id
-                ? 'bg-[#1D1A15] border-[#D4AF37]/60 shadow-[0_4px_22px_rgba(212,175,55,0.07)]'
-                : 'bg-[#1A1A18] border-[#2A2A28] hover:border-[#444] hover:bg-[#20201E]'
-            } disabled:opacity-40`}
+            className={`p-4 rounded-lg border text-left cursor-pointer transition-all flex flex-col justify-between ${currentScenario === scen.id
+              ? 'bg-[#1D1A15] border-[#D4AF37]/60 shadow-[0_4px_22px_rgba(212,175,55,0.07)]'
+              : 'bg-[#1A1A18] border-[#2A2A28] hover:border-[#444] hover:bg-[#20201E]'
+              } disabled:opacity-40`}
             id={`tab-scenario-${scen.id}`}
           >
             <div>
@@ -498,9 +589,8 @@ export default function ScenarioLab({
               <button
                 onClick={handleStartComparison}
                 disabled={isComparisonAnimating || isRunning}
-                className={`px-4 py-2 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 flex items-center gap-1.5 transition-all ${
-                  isComparisonAnimating || isRunning ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
-                }`}
+                className={`px-4 py-2 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 flex items-center gap-1.5 transition-all ${isComparisonAnimating || isRunning ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
+                  }`}
                 id="run-scenario-simulate-btn"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
@@ -510,9 +600,8 @@ export default function ScenarioLab({
               <button
                 onClick={() => onRunScenario(selected.id)}
                 disabled={isRunning || isComparisonAnimating}
-                className={`px-3 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#D4AF37] hover:text-[#FFE27D] font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#252523] flex items-center gap-1.5 transition-all ${
-                  isRunning || isComparisonAnimating ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
-                }`}
+                className={`px-3 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#D4AF37] hover:text-[#FFE27D] font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#252523] flex items-center gap-1.5 transition-all ${isRunning || isComparisonAnimating ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
+                  }`}
                 title="Đồng bộ bản đồ kịch bản này xuống bãi cát chế độ đơn phía dưới"
               >
                 <Zap className="w-3 h-3 text-[#D4AF37]" />
@@ -571,11 +660,10 @@ export default function ScenarioLab({
                       key={s.val}
                       onClick={() => setAnimSpeed(s.val)}
                       disabled={isComparisonAnimating}
-                      className={`px-2 py-1 rounded cursor-pointer transition-all ${
-                        animSpeed === s.val 
-                          ? 'bg-[#D4AF37] text-black font-bold' 
-                          : 'text-[#888] hover:text-white hover:bg-[#1E1E1C]'
-                      } disabled:opacity-50`}
+                      className={`px-2 py-1 rounded cursor-pointer transition-all ${animSpeed === s.val
+                        ? 'bg-[#D4AF37] text-black font-bold'
+                        : 'text-[#888] hover:text-white hover:bg-[#1E1E1C]'
+                        } disabled:opacity-50`}
                     >
                       {s.label}
                     </button>
@@ -587,9 +675,8 @@ export default function ScenarioLab({
                   <button
                     onClick={handleStartComparison}
                     disabled={isComparisonAnimating || isRunning}
-                    className={`px-3 py-1.5 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#E5C35D] shadow-md shadow-[#D4AF37]/10 flex items-center gap-1.5 transition-all ${
-                      isComparisonAnimating || isRunning ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'
-                    }`}
+                    className={`px-3 py-1.5 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#E5C35D] shadow-md shadow-[#D4AF37]/10 flex items-center gap-1.5 transition-all ${isComparisonAnimating || isRunning ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'
+                      }`}
                   >
                     <Play className="w-3 h-3 fill-current" />
                     <span>Lên Đèn Đấu Đối Kháng</span>

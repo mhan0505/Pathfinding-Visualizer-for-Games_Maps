@@ -33,7 +33,7 @@ export default function Header() {
             Môi trường so sánh hiệu năng và phân tích trực quan tốc độ của các thuật toán lý thuyết đồ thị cổ điển:{' '}
             <span className="text-[#D4AF37]">Breadth-First Search (BFS)</span>,{' '}
             <span className="text-slate-300">Depth-First Search (DFS)</span>, và{' '}
-            <span className="text-[#D4AF37] border-b border-[#D4AF37]/20 pb-0.5">Thuật toán Dijkstra (Địa hình)</span>.
+            <span className="text-[#D4AF37] border-b border-[#D4AF37]/20 pb-0.5">Thuật toán Dijkstra </span>.
           </p>
         </div>
 
