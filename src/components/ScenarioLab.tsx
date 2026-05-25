@@ -243,18 +243,18 @@ export default function ScenarioLab({
   const scenarios = [
     {
       id: 'case1' as ScenarioId,
-      title: 'TÌNH HUỐNG 1 — “Đường Ngắn Không Phải Đường Rẻ”',
+      title: 'TÌNH HUỐNG 1 — “Đường Ngắn nhưng cost cao ”',
       badge: 'Trọng số Địa hình',
       badgeColor: 'text-[#D4AF37] border-[#D4AF37]/35 bg-[#D4AF37]/10',
-      description: 'Lưới chứa một đầm lầy sâu (hệ số cản = 10). BFS ưu tiên đi thẳng tuột xuyên qua đầm lầy vì tiết kiệm bước đi, trong khi Dijkstra bình tĩnh rẽ lái đi đường vòng xa để giữ thể lực.',
-      objective: 'Chứng minh BFS vô năng khi chống chọi với địa hình dốc/bùn lầy (đồ thị có trọng số), trong khi Dijkstra luôn tối ưu hóa chi phí thực tế.',
+      description: 'Lưới chứa một đầm lầy sâu (hệ số cản = 10). BFS ưu tiên đi thẳng tuột xuyên qua đầm lầy vì tiết kiệm bước đi, trong khi Dijkstra luôn tối ưu hoá chi phí thực tế.',
+      objective: 'Chứng minh BFS kém hiệu quả khi gặp với địa hình dốc/bùn lầy (đồ thị có trọng số), trong khi Dijkstra luôn tối ưu hóa chi phí thực tế.',
       leftAlgo: 'BFS',
       rightAlgo: 'Dijkstra',
       expected: [
-        { algo: 'BFS (Bên Trái)', result: 'Lao thẳng tưng xuyên bãi sình nặng', status: 'Mất 11 bước x hệ số cản 10 = Cực kỳ mệt mỏi (Cost cao)' },
-        { algo: 'Dijkstra (Mạn Phải)', result: 'Khuất phục cua vòng rìa phẳng phiu', status: 'Duyệt mượt bờ cỏ, Cost thấp nhất tối ưu tuyệt đối!' }
+        { algo: 'BFS (Left)', result: 'Đi thẳng qua vùng lầy', status: 'Mất 11 bước x hệ số cản 10 = Tốn sức(Cost cao)' },
+        { algo: 'Dijkstra (Right)', result: 'Đi đường vòng', status: ' Cost thấp nhất tối ưu tuyệt đối!' }
       ],
-      insight: 'BFS chỉ đúng trên đồ thị không cấu phân địa hình. Gặp đất dốc cỏ rậm đầm lầy, Dijkstra luôn là vua tìm đường với chi phí thấp nhất.'
+      insight: 'BFS chỉ đúng trên đồ thị không có trọng số. Gặp địa hình có trọng số, Dijkstra luôn là tối ưu với cost thấp nhất.'
     },
     {
       id: 'case2' as ScenarioId,

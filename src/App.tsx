@@ -46,6 +46,15 @@ export default function App() {
     return () => clearAllTimeouts();
   }, []);
 
+  const scrollToGrid = () => {
+    setTimeout(() => {
+      const target = document.getElementById('grid-container-panel');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 80);
+  };
+
   const clearAllTimeouts = () => {
     timeoutIdsRef.current.forEach(id => window.clearTimeout(id));
     timeoutIdsRef.current = [];
@@ -231,6 +240,7 @@ export default function App() {
   // Run selected search algorithm with stagger animation
   const startAlgorithmVisualization = () => {
     if (isRunning) return;
+    scrollToGrid();
     clearAllTimeouts();
 
     // 1. Wipe old paths cleanly
@@ -434,6 +444,7 @@ export default function App() {
   // INSTANT COMPARE RUNNER FOR ALL ALGORITHMS
   const handleTriggerCompareAll = () => {
     if (isRunning) return;
+    scrollToGrid();
     setIsRunningAll(true);
     
     // Clear old visual queues
@@ -521,18 +532,21 @@ export default function App() {
   // Auto layout maze triggers
   const handleRandomWallsGen = (density: number) => {
     if (isRunning) return;
+    scrollToGrid();
     const newGrid = generateRandomWalls(grid, density);
     setGrid(clearPathsAndVisitations(newGrid));
   };
 
   const handleRecursiveMazeGen = () => {
     if (isRunning) return;
+    scrollToGrid();
     const newGrid = generateRecursiveDivision(grid);
     setGrid(clearPathsAndVisitations(newGrid));
   };
 
   const handleSwampTerrainGen = () => {
     if (isRunning) return;
+    scrollToGrid();
     const newGrid = generateSwampTerrain(grid);
     setGrid(clearPathsAndVisitations(newGrid));
   };
@@ -617,6 +631,7 @@ export default function App() {
 
   const handleSelectScenario = (id: ScenarioId) => {
     if (isRunning || isRunningAll) return;
+    scrollToGrid();
     setCurrentScenario(id);
     clearAllTimeouts();
     setMetricsList([]);
@@ -629,6 +644,7 @@ export default function App() {
 
   const handleRunScenario = (id: ScenarioId) => {
     if (isRunning || isRunningAll) return;
+    scrollToGrid();
     setCurrentScenario(id);
     clearAllTimeouts();
     setMetricsList([]);
