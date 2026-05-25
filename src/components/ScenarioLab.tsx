@@ -243,7 +243,7 @@ export default function ScenarioLab({
   const scenarios = [
     {
       id: 'case1' as ScenarioId,
-      title: 'TÌNH HUỐNG 1 — “Đường Ngắn nhưng cost cao ”',
+      title: 'CASE 1 — “Đường Ngắn nhưng cost cao ”',
       badge: ' Weighted Terrain',
       badgeColor: 'text-[#D4AF37] border-[#D4AF37]/35 bg-[#D4AF37]/10',
       description: 'Lưới chứa một đầm lầy sâu (hệ số cản = 10). BFS ưu tiên đi thẳng tuột xuyên qua đầm lầy vì tiết kiệm bước đi, trong khi Dijkstra luôn tối ưu hoá chi phí thực tế.',
@@ -258,7 +258,7 @@ export default function ScenarioLab({
     },
     {
       id: 'case2' as ScenarioId,
-      title: 'TÌNH HUỐNG 2 — “Mê Cung Ngõ Cụt Nguy Hiểm”',
+      title: 'CASE 2 — “Mê Cung Ngõ Cụt Nguy Hiểm”',
       badge: 'Maze with Deadlock',
       badgeColor: 'text-amber-500 border-amber-500/35 bg-amber-500/10',
       description: 'Hành lang dài nằm chắn ngang phía ưu tiên của DFS. Trong khi target nằm kề sát bên xuất phát chỉ 3 ô ở phía dưới .',
@@ -273,7 +273,7 @@ export default function ScenarioLab({
     },
     {
       id: 'case3' as ScenarioId,
-      title: 'TÌNH HUỐNG 3 — “ Dijkstra\'s Bait ”',
+      title: 'CASE 3 — “ Dijkstra\'s Bait ”',
       badge: 'Dijkstra\'s Bait',
       badgeColor: 'text-[#E53E3E] border-[#E53E3E]/35 bg-[#E53E3E]/10',
       description: 'Lối đi bên trái cực kỳ rộng mở và phẳng lặng (Cost = 1). Lối đi bên phải dẫn tới đích nhưng bị một đai bùn lầy dày đặc (Cost = 10) chắn ngang. Vì mải mê thám thính vùng cỏ phẳng chi phí rẻ phía sau lưng ngược hướng mục tiêu, Dijkstra sẽ bị lừa thám thính toàn bộ mạn trái trước khi lội bùn mạn phải.',
