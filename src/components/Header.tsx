@@ -32,8 +32,10 @@ export default function Header() {
           <p className="text-xs text-[#888] max-w-2xl leading-relaxed font-sans">
             Allow users to create mazes/maps and compare algorithm efficiency.:{' '}
             <span className="text-[#D4AF37]">Breadth-First Search (BFS)</span>,{' '}
-            <span className="text-slate-300">Depth-First Search (DFS)</span>, và{' '}
-            <span className="text-[#D4AF37] border-b border-[#D4AF37]/20 pb-0.5">Thuật toán Dijkstra </span>.
+            <span className="text-slate-300">Depth-First Search (DFS)</span>, and{' '}
+            <span className="text-slate-300">A* Algorithm</span>,{' '}
+            <span className="text-slate-300">Best-First Search</span>,{' '}
+            <span className="text-[#D4AF37] border-b border-[#D4AF37]/20 pb-0.5">Dijkstra's Algorithm </span>.
           </p>
         </div>
 
