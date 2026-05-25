@@ -67,7 +67,7 @@ export default function Legend() {
       {/* Left side: Sleek title */}
       <div className="flex items-center gap-2 shrink-0">
         <Circle className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]/20 animate-pulse" />
-        <span className="text-[11px] font-bold uppercase tracking-widest text-[#888] font-mono">symbol</span>
+        <span className="text-[11px] font-bold uppercase tracking-widest text-[#888] font-mono">Symbols</span>
       </div>
 
       {/* Right side: Flex row of compact blocks */}

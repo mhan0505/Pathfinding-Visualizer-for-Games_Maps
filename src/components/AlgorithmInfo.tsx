@@ -53,6 +53,38 @@ export default function AlgorithmInfo() {
       complexitySpace: 'O(V)',
       optimal: 'Đúng tuyệt đối (Ngay cả khi có sình lầy)',
       useCase: 'Bản đồ Google Maps né tránh kẹt xe, AI tìm đường trong game chiến thuật.'
+    },
+    astar: {
+      title: 'Thuật toán A* (A-Star Search) - Tối ưu Heuristic',
+      description: 'Thuật toán tìm đường thông minh định hướng dựa trên tổng chi phí thực tế g(n) và khoảng cách ước lượng h(n) tới đích. Công thức lõi f(n) = g(n) + w * h(n) định vị trực diện và nhắm thẳng mục tiêu.',
+      pros: [
+        'Đảm bảo tìm được đường đi tối ưu chi phí thấp nhất tuyệt đối (nếu hàm h là admissible).',
+        'Tốc độ vượt trội và tránh thám thính tràn lan vô hướng nhờ sự dẫn dắt của Heuristic.'
+      ],
+      cons: [
+        'Đòi hỏi dung lượng bộ nhớ cho tập Open/Closed (Frontier) như Dijkstra.',
+        'Độ chính xác và hiệu năng phụ thuộc trực tiếp vào hàm Heuristic được chọn.'
+      ],
+      complexityTime: 'O(E * log V) - Phụ thuộc Heuristic',
+      complexitySpace: 'O(V) - Lưu vết Frontier',
+      optimal: 'Đúng (Nếu hàm Heuristic hợp lệ)',
+      useCase: 'AI di chuyển thông minh trong game chiến thuật/thế giới mở, robot tự hành.'
+    },
+    bestfirst: {
+      title: 'Duyệt tham lam Heuristic (Greedy Best-First Search)',
+      description: 'Chiến lược tìm kiếm tham lam quyết liệt, tại mỗi bước đi chỉ mở rộng nút có khoảng cách ước lượng h(n) gần mục tiêu nhất mà bỏ qua hoàn toàn chi phí thực tế g(n) đã đi qua.',
+      pros: [
+        'Tốc độ tính toán siêu tốc, tiến sát mục tiêu trong tích tắc khi không gian trống phẳng.',
+        'Lý tưởng khi cần tìm một đường đi khả thi nhanh nhất mà không đòi hỏi tối ưu chi phí.'
+      ],
+      cons: [
+        'Không đảm bảo tìm thấy đường ngắn nhất; rất dễ bị dẫn dụ đi vòng tốn kém.',
+        'Dễ bị bế tắc tuần hoàn hoặc duyệt mù quáng khi vướng các chướng ngại vật lõm phức tạp.'
+      ],
+      complexityTime: 'O(b^m) - Tồi nhất nếu bị kẹt ngõ cụt',
+      complexitySpace: 'O(b^m) - Frontier lân cận',
+      optimal: 'Không tối ưu',
+      useCase: 'Định vị hướng đi sơ bộ thời gian thực, AI ứng phó khẩn cấp trong không gian mở.'
     }
   };
 
@@ -72,40 +104,21 @@ export default function AlgorithmInfo() {
       </div>
 
       {/* Tabs list with Sophisticated Dark style */}
-      <div className="flex bg-[#0D0D0D] p-1 rounded border border-[#2A2A28] mb-4 text-[10px] font-mono font-semibold">
-        <button
-          onClick={() => setActiveTab('bfs')}
-          className={`flex-1 py-1.5 px-2 rounded-sm text-center uppercase tracking-wider transition-all ${
-            activeTab === 'bfs'
-              ? 'bg-[#1A1A18] text-[#D4AF37] border border-[#2A2A28]'
-              : 'text-[#666] hover:text-[#F2F2F0]'
-          }`}
-          id="tab-bfs"
-        >
-          BFS
-        </button>
-        <button
-          onClick={() => setActiveTab('dfs')}
-          className={`flex-1 py-1.5 px-2 rounded-sm text-center uppercase tracking-wider transition-all ${
-            activeTab === 'dfs'
-              ? 'bg-[#1A1A18] text-[#D4AF37] border border-[#2A2A28]'
-              : 'text-[#666] hover:text-[#F2F2F0]'
-          }`}
-          id="tab-dfs"
-        >
-          DFS
-        </button>
-        <button
-          onClick={() => setActiveTab('dijkstra')}
-          className={`flex-1 py-1.5 px-2 rounded-sm text-center uppercase tracking-wider transition-all ${
-            activeTab === 'dijkstra'
-              ? 'bg-[#1A1A18] text-[#D4AF37] border border-[#2A2A28]'
-              : 'text-[#666] hover:text-[#F2F2F0]'
-          }`}
-          id="tab-dijkstra"
-        >
-          Dijkstra
-        </button>
+      <div className="flex flex-wrap gap-1 bg-[#0D0D0D] p-1 rounded border border-[#2A2A28] mb-4 text-[10px] font-mono font-semibold">
+        {(['bfs', 'dfs', 'dijkstra', 'astar', 'bestfirst'] as AlgorithmType[]).map((algo) => (
+          <button
+            key={algo}
+            onClick={() => setActiveTab(algo)}
+            className={`flex-1 min-w-[70px] py-1.5 px-2 rounded-sm text-center uppercase tracking-wider transition-all ${
+              activeTab === algo
+                ? 'bg-[#1A1A18] text-[#D4AF37] border border-[#2A2A28]'
+                : 'text-[#666] hover:text-[#F2F2F0]'
+            }`}
+            id={`tab-${algo}`}
+          >
+            {algo === 'bfs' ? 'BFS' : algo === 'dfs' ? 'DFS' : algo === 'dijkstra' ? 'Dijkstra' : algo === 'astar' ? 'A*' : 'Greedy'}
+          </button>
+        ))}
       </div>
 
       {/* Tab description */}

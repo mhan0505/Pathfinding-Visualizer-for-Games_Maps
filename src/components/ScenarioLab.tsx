@@ -656,10 +656,10 @@ export default function ScenarioLab({
                 {/* Speed buttons */}
                 <div className="flex bg-[#141412] p-0.5 rounded border border-[#262624] text-[9px] font-mono">
                   {([
-                    { val: 'slow', label: '1x Chậm' },
-                    { val: 'medium', label: '2x Vừa' },
-                    { val: 'fast', label: '5x Nhanh' },
-                    { val: 'super', label: '10x Cực Đại' }
+                    { val: 'slow', label: '1x Slow ' },
+                    { val: 'medium', label: '2x Medium' },
+                    { val: 'fast', label: '5x Fast' },
+                    { val: 'super', label: '10x Max' }
                   ] as const).map((s) => (
                     <button
                       key={s.val}
@@ -684,7 +684,7 @@ export default function ScenarioLab({
                       }`}
                   >
                     <Play className="w-3 h-3 fill-current" />
-                    <span>Lên Đèn Đấu Đối Kháng</span>
+                    <span> compare </span>
                   </button>
 
                   <button
@@ -827,7 +827,7 @@ export default function ScenarioLab({
           <div className="p-3 bg-[#1C1A14]/30 border border-[#4A4232]/30 rounded flex gap-2.5 items-start">
             <Award className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
             <div>
-              <span className="text-[9px] uppercase font-mono text-[#D4AF37] block font-bold">Insight cốt lõi của kỹ sư:</span>
+              <span className="text-[9px] uppercase font-mono text-[#D4AF37] block font-bold">Insight cốt lõi :</span>
               <p className="text-[10px] text-[#C1B58C] mt-0.5 leading-relaxed font-sans">
                 {selected.insight}
               </p>

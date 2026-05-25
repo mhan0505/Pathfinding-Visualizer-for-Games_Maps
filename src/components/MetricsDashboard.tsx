@@ -17,7 +17,7 @@ export default function MetricsDashboard({
 }: MetricsDashboardProps) {
   // Find extreme metrics to point out recommendations in summary
   const validMetrics = metricsList.filter(m => m.pathFound);
-  
+
   const fastestAlgo = [...validMetrics].sort((a, b) => a.executionTime - b.executionTime)[0];
   const lowestVisitedAlgo = [...validMetrics].sort((a, b) => a.visitedCount - b.visitedCount)[0];
   const lowestCostAlgo = [...validMetrics].sort((a, b) => a.pathCost - b.pathCost)[0];
@@ -54,8 +54,8 @@ export default function MetricsDashboard({
         <div className="flex items-center gap-2.5">
           <BarChart3 className="w-5 h-5 text-[#D4AF37]" />
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white">So Sánh Thực Nghiệm</h3>
-            <p className="text-[10px] text-[#666] font-mono mt-0.5">Phân tích động trên bản đồ hiện thời</p>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Data Compare</h3>
+            <p className="text-[10px] text-[#666] font-mono mt-0.5">Visualizing data-driven performance insights .</p>
           </div>
         </div>
 
@@ -64,26 +64,25 @@ export default function MetricsDashboard({
             <button
               onClick={onClearMetrics}
               className="p-2 rounded bg-[#1A1A18] border border-[#2A2A28] text-[#666] hover:text-white transition-colors text-[10px] flex items-center gap-1.5"
-              title="Xóa dữ liệu"
+              title="Clear"
               id="clear-metrics-btn"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline uppercase">Xóa bảng</span>
+              <span className="hidden sm:inline uppercase">Clear</span>
             </button>
           )}
 
           <button
             onClick={onTriggerCompare}
             disabled={isRunningAll}
-            className={`px-4 py-2 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
-              isRunningAll
+            className={`px-4 py-2 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${isRunningAll
                 ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
                 : 'bg-[#D4AF37] text-black hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 active:scale-95'
-            }`}
+              }`}
             id="trigger-compare-btn"
           >
             <Zap className={`w-3.5 h-3.5 ${isRunningAll ? 'animate-bounce' : ''}`} />
-            <span>{isRunningAll ? 'Đang so sánh...' : 'Đối chiếu tất cả'}</span>
+            <span>{isRunningAll ? 'Running...' : 'Run All'}</span>
           </button>
         </div>
       </div>
@@ -91,9 +90,9 @@ export default function MetricsDashboard({
       {metricsList.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border border-dashed border-[#2A2A28] rounded bg-[#0D0D0D]/30 min-h-[220px]">
           <BrainCircuit className="w-10 h-10 text-[#444] mb-3 animate-pulse" />
-          <h4 className="text-xs uppercase tracking-wider text-[#888]">Chưa có số liệu phân tích</h4>
+          <h4 className="text-xs uppercase tracking-wider text-[#888]">No Data</h4>
           <p className="text-[10px] text-[#555] max-w-sm mt-1.5 leading-relaxed font-mono">
-            Khởi tạo khảo nghiệm bằng nút <span className="text-[#D4AF37]">"Đối chiếu tất cả"</span> để phân tích BFS, DFS và Dijkstra song song trên lưới hiện tại.
+            Run the algorithms to see performance data.
           </p>
         </div>
       ) : (
@@ -106,7 +105,7 @@ export default function MetricsDashboard({
                   <Zap className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-mono text-[#666] block">TỐC ĐỘ CAO NHẤT</span>
+                  <span className="text-[9px] uppercase font-mono text-[#666] block">FASTEST</span>
                   <span className={`text-[11px] font-bold ${getAlgoTextColor(fastestAlgo.algorithmId)}`}>
                     {fastestAlgo.name.split(' ')[0]} ({formatTime(fastestAlgo.executionTime)})
                   </span>
@@ -118,7 +117,7 @@ export default function MetricsDashboard({
                   <CopyCheck className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-mono text-[#666] block">HẠN CHẾ DUYỆT ĐỈNH</span>
+                  <span className="text-[9px] uppercase font-mono text-[#666] block">NODE VISITED</span>
                   <span className={`text-[11px] font-bold ${getAlgoTextColor(lowestVisitedAlgo.algorithmId)}`}>
                     {lowestVisitedAlgo.name.split(' ')[0]} ({lowestVisitedAlgo.visitedCount} ô)
                   </span>
@@ -130,7 +129,7 @@ export default function MetricsDashboard({
                   <Activity className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase font-mono text-[#666] block">ĐƯỜNG TỐI ƯU CHI PHÍ</span>
+                  <span className="text-[9px] uppercase font-mono text-[#666] block">COST-OPTIMAL PATH</span>
                   <span className={`text-[11px] font-semibold ${getAlgoTextColor(lowestCostAlgo.algorithmId)}`}>
                     {lowestCostAlgo.name.split(' ')[0]} (Cost: {lowestCostAlgo.pathCost})
                   </span>
