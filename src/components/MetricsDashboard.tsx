@@ -210,11 +210,11 @@ export default function MetricsDashboard({
             <table className="w-full text-left text-xs">
               <thead className="bg-[#1A1A18] text-[#666] font-mono text-[10px] uppercase tracking-wider">
                 <tr>
-                  <th className="py-2 px-3">Hạt Nhân</th>
-                  <th className="py-2 px-3">Thời Gian</th>
-                  <th className="py-2 px-3">Số Ô Duyệt</th>
-                  <th className="py-2 px-3">Lực Cản</th>
-                  <th className="py-2 px-3">Tối Ưu</th>
+                  <th className="py-2 px-3">Algorithm</th>
+                  <th className="py-2 px-3">Time</th>
+                  <th className="py-2 px-3">Nodes Visited</th>
+                  <th className="py-2 px-3">Total Cost</th>
+                  <th className="py-2 px-3">Optimal</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#2A2A28] font-mono bg-[#0D0D0D]/40">
