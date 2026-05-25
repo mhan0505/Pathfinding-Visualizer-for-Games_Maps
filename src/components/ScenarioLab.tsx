@@ -315,6 +315,13 @@ export default function ScenarioLab({
     };
   }, []);
 
+  const handleScrollToComparison = () => {
+    const target = document.getElementById('sxs-grids-board');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   const handleStartComparison = () => {
     if (!currentScenario || isComparisonAnimating) return;
 
@@ -587,14 +594,12 @@ export default function ScenarioLab({
 
             <div className="flex flex-wrap gap-2 items-center">
               <button
-                onClick={handleStartComparison}
-                disabled={isComparisonAnimating || isRunning}
-                className={`px-4 py-2 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-[10px] rounded hover:bg-[#E5C35D] shadow-lg shadow-[#D4AF37]/10 flex items-center gap-1.5 transition-all ${isComparisonAnimating || isRunning ? 'opacity-40 cursor-not-allowed' : 'active:scale-95 cursor-pointer'
-                  }`}
+                onClick={handleScrollToComparison}
+                className={`px-4 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#D4AF37] hover:text-[#FFE27D] hover:bg-[#252523] font-bold uppercase tracking-wider text-[10px] rounded flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer`}
                 id="run-scenario-simulate-btn"
               >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Chạy Lab Đối Kháng</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+                <span>Xem Đấu Đối Kháng</span>
               </button>
 
               <button
