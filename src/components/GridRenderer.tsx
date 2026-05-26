@@ -118,7 +118,7 @@ export default function GridRenderer({
       <div className="mt-3.5 flex flex-col sm:flex-row gap-2 sm:items-center justify-between text-[10px] text-[#666] font-mono px-1">
         <div className="flex items-center gap-1.5">
           <Compass className="w-3.5 h-3.5 text-[#D4AF37]" />
-          <span>Hệ thống mạng lưới lý thuyết đồ thị: {rows} hàng × {cols} cột (800 đỉnh/nút liên kết)</span>
+          <span>Hệ thống mạng lưới lý thuyết đồ thị: {rows} hàng × {cols} cột (900 đỉnh/nút liên kết)</span>
         </div>
         <span>Thao tác: Nhấn giữ cọ vẽ để tô tường, đặt điểm nút hoặc dịch chuyển cờ bắt đầu/kết thúc</span>
       </div>
