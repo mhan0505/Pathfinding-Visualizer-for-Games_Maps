@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pathfinding Visualizer Project Presentation</title>
+  <!-- Google Fonts Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0A0A0A;
+      --bg-card: #141412;
+      --border-color: #2A2A28;
+      --text-main: #F2F2F0;
+      --text-muted: #888884;
+      --accent-gold: #D4AF37;
+      --accent-gold-hover: #E5C35D;
+      --accent-cyan: #00F5FF;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-outfit);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Bar */
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      z-index: 10;
+      shrink: 0;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      color: var(--accent-gold);
+      animation: pulse 2s infinite;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .logo-text span {
+      color: var(--accent-gold);
+    }
+
+    .controls-top {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .btn {
+      background-color: #1A1A18;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-outfit);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      color: var(--text-main);
+      border-color: #444;
+      background-color: #222;
+    }
+
+    .btn-primary {
+      background-color: var(--accent-gold);
+      color: #0A0A0A;
+      border-color: var(--accent-gold);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-gold-hover);
+      color: #0A0A0A;
+      border-color: var(--accent-gold-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-active {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    /* Main Workspace Split layout */
+    .workspace {
+      display: flex;
+      flex-1: 1;
+      height: calc(100vh - 130px);
+      position: relative;
+    }
+
+    /* Slides viewport Container */
+    .slides-container {
+      flex: 3;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background-color: #0A0A0A;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* Side Speaker Notes Panel */
+    .notes-container {
+      flex: 1;
+      min-width: 320px;
+      max-width: 450px;
+      background-color: var(--bg-card);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+
+    .notes-hidden {
+      display: none !important;
+    }
+
+    .notes-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .notes-content {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #C2C2BE;
+    }
+
+    /* Slide Card Style */
+    .slide-card {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      padding: 60px;
+      position: relative;
+      overflow-y: auto;
+      animation: fadeInSlide 0.5s ease forwards;
+    }
+
+    .slide-card.active {
+      display: flex;
+    }
+
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 30px;
+      right: 40px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .slide-title-area {
+      margin-bottom: 40px;
+      border-left: 4px solid var(--accent-gold);
+      padding-left: 20px;
+    }
+
+    .slide-category {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    /* Content components */
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .feature-icon-wrapper {
+      background-color: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      padding: 6px;
+      color: var(--accent-gold);
+      shrink: 0;
+    }
+
+    .feature-text-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .feature-text-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Split column layouts on slides */
+    .slide-split-row {
+      display: grid;
+      grid-template-cols: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .visual-block {
+      background-color: #0D0D0D;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 260px;
+    }
+
+    /* Custom slide contents */
+    .table-container {
+      background-color: #0D0D0D;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background-color: #1A1A18;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #1C1C1A;
+      color: #C2C2BE;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .optimal-badge {
+      background-color: rgba(212, 175, 55, 0.1);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      color: var(--accent-gold);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Visual Graph Grid Demo */
+    .grid-demo {
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      gap: 3px;
+      background-color: #1A1A18;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .grid-cell {
+      aspect-ratio: 1;
+      background-color: #0F0F0E;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .cell-start { background-color: var(--accent-gold); }
+    .cell-end { background-color: #FFF; }
+    .cell-wall { background-color: #333; }
+    .cell-mud { background-color: #5C4533; }
+    .cell-water { background-color: #2B3554; }
+
+    /* Weight loop demo representation */
+    .weight-loop-diagram {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 15px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .diag-box {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #1A1A18;
+      min-width: 100px;
+    }
+
+    .diag-arrow {
+      color: var(--accent-gold);
+      font-size: 20px;
+    }
+
+    /* Trophy Leaderboard Card Style */
+    .leaderboard-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      background-color: #1A1A18;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 8px;
+    }
+
+    .trophy-badge {
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(212, 175, 55, 0.1);
+      border-radius: 50%;
+    }
+
+    .leaderboard-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .leaderboard-value {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent-gold);
+      font-weight: bold;
+    }
+
+    /* Footer Navigation bar */
+    footer {
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      z-index: 10;
+      shrink: 0;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .indicator-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: #333;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: var(--accent-gold);
+      transform: scale(1.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .workspace {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+      }
+      .slides-container {
+        height: 500px;
+        flex: none;
+      }
+      .notes-container {
+        max-width: none;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        flex: none;
+        height: auto;
+      }
+      .slide-card {
+        padding: 30px;
+      }
+      .slide-title {
+        font-size: 24px;
+      }
+      .slide-split-row {
+        grid-template-cols: 1fr;
+      }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.08); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="logo-container">
+      <i data-lucide="map" class="logo-icon"></i>
+      <h1 class="logo-text">Pathfinding<span>Visualizer</span></h1>
+    </div>
+    <div class="controls-top">
+      <button class="btn btn-active" id="btn-speaker-view">
+        <i data-lucide="eye"></i>
+        <span>Presenter Notes</span>
+      </button>
+      <button class="btn" id="btn-fullscreen">
+        <i data-lucide="maximize"></i>
+        <span>Fullscreen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Split Presentation Space -->
+  <div class="workspace">
+    
+    <!-- Left Column: The actual slides -->
+    <div class="slides-container" id="slides-container">
+      
+      <!-- Slide 1 -->
+      <div class="slide-card active" data-slide-index="1">
+        <span class="slide-number">01 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Project Presentation</span>
+          <h2 class="slide-title">NAVIGATING COMPLEX TERRAINS: PATHFINDING IN GAMES & DIGITAL MAPS</h2>
+        </div>
+        <div class="slide-body">
+          <p style="font-size: 16px; color: var(--text-muted); max-width: 700px; line-height: 1.6;">
+            An interactive real-time visualizer, comparative benchmarking, and adversarial scenario lab for pathfinding algorithms on multi-weighted grids.
+          </p>
+          <div class="slide-split-row" style="margin-top: 20px;">
+            <div class="visual-block" style="border-color: rgba(212, 175, 55, 0.2); background: linear-gradient(135deg, #141412 0%, #201b10 100%);">
+              <h3 style="color: var(--accent-gold); font-size: 20px; font-weight: 800; margin-bottom: 10px;">PROVEN CORE VALUES</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #C2C2BE;">
+                <li style="display: flex; gap: 8px; align-items: center;"><i data-lucide="check" class="text-gold" style="color: var(--accent-gold); width: 16px;"></i> Realistic terrain modeling</li>
+                <li style="display: flex; gap: 8px; align-items: center;"><i data-lucide="check" class="text-gold" style="color: var(--accent-gold); width: 16px;"></i> Highly precise CPU measurements</li>
+                <li style="display: flex; gap: 8px; align-items: center;"><i data-lucide="check" class="text-gold" style="color: var(--accent-gold); width: 16px;"></i> Visual bug-prevention corner locking</li>
+              </ul>
+            </div>
+            <div style="display: flex; justify-content: center;">
+              <i data-lucide="brain-circuit" style="width: 140px; height: 140px; color: var(--accent-gold); opacity: 0.15;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide-card" data-slide-index="2">
+        <span class="slide-number">02 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Interface Features</span>
+          <h2 class="slide-title">DYNAMIC INTERACTIVE GRIDS & CUSTOM LEVEL DESIGN</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div class="features-list">
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="grid" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Interactive Drawing Canvas</h4>
+                  <p class="feature-text-desc">High-resolution 20 rows x 45 columns grid (900 active nodes) supporting instant click & drag paintings.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="droplet" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Multi-weighted Terrains</h4>
+                  <p class="feature-text-desc">Model realistic resistances: Stone Wall (Impassable), Mud Swamp (Cost = 5), Deep Water streams (Cost = 10).</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="dribbble" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Procedural Maze Tools</h4>
+                  <p class="feature-text-desc">Generate Recursive Division mazes or customizable random barriers with a noise density slider (10% - 40%).</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="visual-block">
+              <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; font-family: var(--font-mono);">Terrain Grid Blueprint</h4>
+              <div class="grid-demo">
+                <!-- 15x5 small grid simulation -->
+                <script>
+                  const cellStyles = ['cell-start', '', '', 'cell-wall', 'cell-wall', '', 'cell-mud', 'cell-mud', '', 'cell-water', 'cell-water', '', '', '', 'cell-end'];
+                  for(let i=0; i<5; i++) {
+                    for(let j=0; j<15; j++) {
+                      const idx = j % cellStyles.length;
+                      document.write(`<div class="grid-cell ${cellStyles[idx]}"></div>`);
+                    }
+                  }
+                </script>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:10px; margin-top:10px; font-family:var(--font-mono); color:var(--text-muted);">
+                <span>🟨 Start</span>
+                <span>🟩 Water</span>
+                <span>🟫 Mud</span>
+                <span>⬜ Target</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide-card" data-slide-index="3">
+        <span class="slide-number">03 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Core Engines</span>
+          <h2 class="slide-title">THE BRAINS: 5 INTEGRATED PATHFINDING ENGINES</h2>
+        </div>
+        <div class="slide-body">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Search Type</th>
+                  <th>Key Metric Used</th>
+                  <th>Optimality</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:bold; color:var(--accent-gold);">A* Search</td>
+                  <td>Informed Heuristic</td>
+                  <td>f(n) = g(n) + w * h(n)</td>
+                  <td><span class="optimal-badge">Optimal</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold;">Dijkstra</td>
+                  <td>Uniform Cost</td>
+                  <td>g(n) = distance values</td>
+                  <td><span class="optimal-badge">Optimal</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold;">BFS</td>
+                  <td>Uninformed Level</td>
+                  <td>Unweighted Hops (FIFO)</td>
+                  <td>Optimal on Unweighted</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold;">DFS</td>
+                  <td>Blind Backtracking</td>
+                  <td>Deepest Path (LIFO)</td>
+                  <td>Non-Optimal</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:bold; color:var(--accent-gold);">Greedy Best-First</td>
+                  <td>Best Heuristic</td>
+                  <td>h(n) = estimated distance</td>
+                  <td>Non-Optimal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide-card" data-slide-index="4">
+        <span class="slide-number">04 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Physics & Geometry</span>
+          <h2 class="slide-title">ADVANCED MOVEMENT CUSTOMIZATION & GEOMETRY</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div class="features-list">
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="compass" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">4 Heuristic Metrics</h4>
+                  <p class="feature-text-desc">Manhattan (4-way orthogonal), Euclidean (straight line), Octile (8-way), Chebyshev (8-way uniform cost).</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="shield-alert" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Corner-Crossing Safeguard</h4>
+                  <p class="feature-text-desc">Prevents clipping through diagonal corners of adjacent stone walls. Vital for realistic physical collisions in games.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="sliders-horizontal" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Heuristic Weighting</h4>
+                  <p class="feature-text-desc">Adjust the weight parameter (w) dynamically. Turn A* search into pure Dijkstra (w = 0) or extreme Greedy Search.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="visual-block">
+              <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 20px; font-family: var(--font-mono); text-align: center;">Corner Crossing Blocked</h4>
+              <div style="display:flex; justify-content:center; align-items:center; gap:20px;">
+                <!-- Corner blocks wireframe -->
+                <div style="display:grid; grid-template-columns:repeat(2, 40px); gap:4px; background-color:#1A1A18; padding:8px; border-radius:6px;">
+                  <div style="background-color:#0F0F0E; aspect-ratio:1; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#666;">Start</div>
+                  <div style="background-color:#333; aspect-ratio:1; border-radius:4px;"></div>
+                  <div style="background-color:#333; aspect-ratio:1; border-radius:4px;"></div>
+                  <div style="background-color:#0F0F0E; aspect-ratio:1; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:var(--accent-gold);">Blocked</div>
+                </div>
+              </div>
+              <p style="font-size:11px; text-align:center; color:var(--text-muted); margin-top:15px; line-height:1.4;">
+                If adjacent orthogonal cells are walls, diagonal movement between them is locked.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide-card" data-slide-index="5">
+        <span class="slide-number">05 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Adversarial Testing</span>
+          <h2 class="slide-title">THE SCENARIO LAB: PROVING ALGORITHMS WITH RIGOR</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div class="visual-block">
+              <h3 style="color:var(--accent-gold); font-size:16px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="compass" style="width:18px;"></i> Case 1: Shortest Path vs. Optimal Cost
+              </h3>
+              <p style="font-size:12px; color:#A0A09B; line-height:1.5;">
+                A heavy swamp water barrier (Cost = 10) is placed in the center; a clean flat bypass around it.
+              </p>
+              <ul style="margin-top:10px; list-style:none; font-size:11px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                <li><strong style="color:var(--text-main);">BFS:</strong> Plows directly through the lake to minimize hops.</li>
+                <li><strong style="color:var(--accent-gold);">Dijkstra:</strong> Detours intelligently around the flat grass to save cost.</li>
+              </ul>
+            </div>
+            
+            <div class="visual-block">
+              <h3 style="color:var(--accent-gold); font-size:16px; font-weight:800; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="x-circle" style="width:18px;"></i> Case 2: The DFS Ngõ Cụt Trap
+              </h3>
+              <p style="font-size:12px; color:#A0A09B; line-height:1.5;">
+                A deep dead-end hallway is placed on the side; target is placed just 3 cells adjacent to start.
+              </p>
+              <ul style="margin-top:10px; list-style:none; font-size:11px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                <li><strong style="color:var(--text-main);">DFS:</strong> Dives straight into the dead end, checking hundreds of cells.</li>
+                <li><strong style="color:var(--accent-gold);">BFS:</strong> Spherical concentric search reaches target in 3 ticks.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="slide-card" data-slide-index="6">
+        <span class="slide-number">06 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Case Study</span>
+          <h2 class="slide-title">DIJKSTRA'S SHOCKING FLAW: WEIGHT LURING</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div>
+              <p style="font-size:15px; line-height:1.6; color:#C2C2BE; margin-bottom:15px;">
+                Dijkstra's is blind to direction. It expands outward purely based on the absolute cheapest path cost currently available in its queue.
+              </p>
+              <div class="features-list">
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                  <i data-lucide="arrow-right-circle" style="color:var(--accent-gold); shrink:0; margin-top:2px;"></i>
+                  <span style="font-size:13px; color:var(--text-muted);">The target (Right) is blocked by a swamp belt (Cost = 10).</span>
+                </div>
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                  <i data-lucide="arrow-right-circle" style="color:var(--accent-gold); shrink:0; margin-top:2px;"></i>
+                  <span style="font-size:13px; color:var(--text-muted);">The opposite space (Left) is flat grass (Cost = 1).</span>
+                </div>
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                  <i data-lucide="arrow-right-circle" style="color:var(--accent-gold); shrink:0; margin-top:2px;"></i>
+                  <span style="font-size:13px; color:var(--text-muted);"><strong>Dijkstra</strong> thám thính over 400 nodes on the left first before crossing the swamp.</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="visual-block">
+              <div class="weight-loop-diagram">
+                <div class="diag-box">Grass Meadow<br><span style="color:var(--accent-gold);">Cost = 1</span></div>
+                <span class="diag-arrow">&larr; Dijkstra Lured</span>
+                <div class="diag-box" style="border-color:var(--accent-gold);">Start</div>
+                <span class="diag-arrow">&rarr; Actual Path</span>
+                <div class="diag-box">Swamp Mud<br><span style="color:#C2C2BE;">Cost = 10</span></div>
+              </div>
+              <p style="font-size:11px; text-align:center; color:var(--text-muted); margin-top:25px; line-height:1.4;">
+                This scenario proves that unguided shortest path searches can perform poorly compared to heuristic-guided searches (A*) in weighted spaces.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7 -->
+      <div class="slide-card" data-slide-index="7">
+        <span class="slide-number">07 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Performance Evaluation</span>
+          <h2 class="slide-title">DYNAMIC PERFORMANCE BENCHMARKING</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div>
+              <p style="font-size:15px; color:#C2C2BE; line-height:1.6; margin-bottom:15px;">
+                Rigorous empirical data metrics captured in real-time. Execution times are averaged over <strong>50 silent runs</strong> to filter CPU noise.
+              </p>
+              <div style="background-color:rgba(212, 175, 55, 0.05); border:1px dashed var(--accent-gold); border-radius:8px; padding:16px;">
+                <h5 style="color:var(--accent-gold); font-size:12px; text-transform:uppercase; font-family:var(--font-mono); margin-bottom:6px;">Standard Benchmark Criteria</h5>
+                <ul style="list-style:none; font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+                  <li><i data-lucide="chevron-right" style="width:12px; color:var(--accent-gold);"></i> Execution Duration (Microseconds accuracy)</li>
+                  <li><i data-lucide="chevron-right" style="width:12px; color:var(--accent-gold);"></i> Frontier Expansion Size (Nodes visited)</li>
+                  <li><i data-lucide="chevron-right" style="width:12px; color:var(--accent-gold);"></i> Actual Path Cost Accumulation</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div>
+              <div class="leaderboard-row">
+                <div class="trophy-badge">🏆</div>
+                <div>
+                  <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono); block">FASTEST COMPUTATION</span>
+                  <span class="leaderboard-name">A* / Greedy Search</span>
+                </div>
+                <span class="leaderboard-value">&lt; 0.25 ms</span>
+              </div>
+              
+              <div class="leaderboard-row">
+                <div class="trophy-badge" style="background-color:rgba(255,255,255,0.05);">🎖️</div>
+                <div>
+                  <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono); block">FEWEST VISITED CELLS</span>
+                  <span class="leaderboard-name">Greedy Best-First</span>
+                </div>
+                <span class="leaderboard-value">34 Cells</span>
+              </div>
+              
+              <div class="leaderboard-row">
+                <div class="trophy-badge" style="background-color:rgba(255,255,255,0.05);">🥇</div>
+                <div>
+                  <span style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono); block">ABSOLUTE MINIMAL COST</span>
+                  <span class="leaderboard-name">Dijkstra / A*</span>
+                </div>
+                <span class="leaderboard-value">Optimal Cost</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8 -->
+      <div class="slide-card" data-slide-index="8">
+        <span class="slide-number">08 / 08</span>
+        <div class="slide-title-area">
+          <span class="slide-category">Conclusion & Future</span>
+          <h2 class="slide-title">CONCLUSION & FUTURE ROADMAP</h2>
+        </div>
+        <div class="slide-body">
+          <div class="slide-split-row">
+            <div class="features-list">
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="graduation-cap" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Academic Integration</h4>
+                  <p class="feature-text-desc">Successfully bridges abstract graph theory with real-time interactive game physics simulation.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="map-pin" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Hierarchical Pathfinding (HPA*)</h4>
+                  <p class="feature-text-desc">Future roadmap focuses on dividing huge maps into sub-sections to compute macro-routing in games.</p>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon-wrapper"><i data-lucide="users" style="width: 18px; height: 18px;"></i></div>
+                <div>
+                  <h4 class="feature-text-title">Multi-Agent Pathfinding</h4>
+                  <p class="feature-text-desc">Enhancing AI coordination with dynamic local collision avoidance (RVO/ORCA) algorithms.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="visual-block" style="background: linear-gradient(135deg, #141412 0%, #17241F 100%); border-color: rgba(0, 245, 255, 0.15);">
+              <h3 style="color:var(--accent-cyan); font-size:20px; font-weight:800; margin-bottom:10px;">MISSION ACCOMPLISHED</h3>
+              <p style="font-size:13px; color:#C2C2BE; line-height:1.5;">
+                A clean, modern, high-performance visualizer built to standard. Designed to educate developers on grid algorithm boundaries.
+              </p>
+              <div style="margin-top:20px; color:var(--accent-cyan); font-family:var(--font-mono); font-size:13px; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="chevron-right" class="animate-pulse"></i>
+                <span>Ready for production integration</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Speaker Notes Panel (Presenter Mode) -->
+    <div class="notes-container" id="notes-panel">
+      <div class="notes-header">
+        <i data-lucide="mic"></i>
+        <span>Speaker Notes</span>
+      </div>
+      <div class="notes-content" id="notes-content">
+        Loading speaker notes...
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer Navigation controls -->
+  <footer>
+    <div class="nav-buttons">
+      <button class="btn" id="btn-prev" disabled>
+        <i data-lucide="arrow-left"></i>
+        <span>Previous</span>
+      </button>
+      <button class="btn btn-primary" id="btn-next">
+        <span>Next</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+    </div>
+    
+    <div class="indicator-dots" id="indicator-dots">
+      <!-- Generated dynamically -->
+    </div>
+    
+    <div style="font-size:12px; color:var(--text-muted); font-family:var(--font-mono);">
+      Use <kbd style="background:#1A1A18; padding:2px 6px; border-radius:4px; border:1px solid #333;">&larr;</kbd> and <kbd style="background:#1A1A18; padding:2px 6px; border-radius:4px; border:1px solid #333;">&rarr;</kbd> keys
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Speaker notes dictionary mapping to each slide index
+    const speakerNotes = {
+      1: `<strong>Slide 1: Introduction</strong><br/><br/>
+          "Good day, members of the evaluation committee and colleagues. Pathfinding is the core engine behind navigation in modern open-world games and digital mapping applications.<br/><br/>
+          Today, I am proud to present the 'Pathfinding Visualizer'—an interactive platform designed not only to visualize classic pathfinding algorithms but also to act as a real-world testing ground for evaluating algorithms on static barriers and weighted, complex terrains like swamp mud and deep water lakes."`,
+      
+      2: `<strong>Slide 2: Interactive Grid</strong><br/><br/>
+          "At the heart of our application is an interactive canvas that goes beyond simple binary grids. While traditional visualizers only support walls and empty space, our system introduces multi-weight terrains like swamp mud and deep water.<br/><br/>
+          Users can paint custom levels in real-time, instantly creating complex geometric challenges to test the intelligence of the algorithms."`,
+      
+      3: `<strong>Slide 3: Integrated Engines</strong><br/><br/>
+          "The application integrates five highly optimized engines. We support traditional unweighted graph search algorithms like BFS and DFS, alongside robust weighted algorithms like Dijkstra.<br/><br/>
+          Most notably, we feature A* Search—the gold standard of pathfinding which balances actual cost and heuristic distance—and Greedy Best-First Search, which prioritizes speed above all else."`,
+      
+      4: `<strong>Slide 4: Corner Crossing</strong><br/><br/>
+          "To adapt to modern game physics, we implemented advanced movement controls. Our visualizer supports 8-directional diagonal movement. Crucially, we included a 'Don't Cross Corners' option.<br/><br/>
+          In game development, allowing diagonal movement can sometimes make entities clip right through the sharp corners of solid walls. Our constraint blocks these moves, ensuring realistic physics. Additionally, we support four heuristic metrics and adjustable weights to show students and developers exactly how geometry impacts path calculations."`,
+      
+      5: `<strong>Slide 5: Adversarial Scenario Cases 1 & 2</strong><br/><br/>
+          "To bridge the gap between theory and practice, we designed the Scenario Lab.<br/><br/>
+          In Scenario 1, we pit BFS against Dijkstra. BFS fails spectacularly by diving straight into the deep water lake because it only counts the number of hops. Dijkstra, however, takes the longer path around because it respects movement costs.<br/><br/>
+          In Scenario 2, we show how DFS falls victim to a long dead-end hallway trap due to its single-minded depth-first search, while BFS instantly reaches the adjacent target."`,
+      
+      6: `<strong>Slide 6: Weight Luring Paradox</strong><br/><br/>
+          "Scenario 3 highlights a fascinating academic insight: 'Weight Luring'—the fatal flaw of Dijkstra's algorithm. Because Dijkstra is blind to target direction and only focuses on accumulated minimal cost, it gets lured into exploring a massive, cheap open space to the left, going completely opposite to the goal.<br/><br/>
+          It visits over 400 redundant nodes before finally crossing the swamp on the right. BFS, ignoring weights, plows right through and finds the path significantly faster."`,
+      
+      7: `<strong>Slide 7: Benchmarking</strong><br/><br/>
+          "To provide rigorous quantitative analysis, the platform features a real-time benchmarking dashboard. When the user hits 'Run All', the system runs all five algorithms in the background.<br/><br/>
+          To guarantee academic accuracy, CPU execution times are averaged over 50 consecutive runs to eliminate system noise. The dashboard dynamically awards gold trophies for the fastest speed, the most focused exploration, and the most cost-efficient path, giving developers valuable data to choose the right algorithm."`,
+      
+      8: `<strong>Slide 8: Roadmap & Conclusion</strong><br/><br/>
+          "In conclusion, the 'Pathfinding Visualizer for Games & Maps' successfully delivers a comprehensive, type-safe, and high-performance framework. It serves as both an excellent educational guide and a functional template for real-world game development.<br/><br/>
+          In the future, we aim to implement Hierarchical Pathfinding to support even larger open-world grids.<br/><br/>
+          Thank you so much for your time and attention. I am now open to any questions."`
+    };
+
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    // DOM Elements
+    const slideCards = document.querySelectorAll('.slide-card');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSpeaker = document.getElementById('btn-speaker-view');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+    const notesPanel = document.getElementById('notes-panel');
+    const notesContent = document.getElementById('notes-content');
+    const indicatorDots = document.getElementById('indicator-dots');
+
+    // Create Indicator Dots
+    for (let i = 1; i <= totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (i === 1) dot.classList.add('active');
+      dot.addEventListener('click', () => navigateToSlide(i));
+      indicatorDots.appendChild(dot);
+    }
+    const dots = document.querySelectorAll('.dot');
+
+    // Navigate to slide
+    function navigateToSlide(index) {
+      if (index < 1 || index > totalSlides) return;
+      
+      // Update active card
+      slideCards.forEach(card => card.classList.remove('active'));
+      document.querySelector(`.slide-card[data-slide-index="${index}"]`).classList.add('active');
+
+      // Update dots
+      dots.forEach((dot, idx) => {
+        if (idx + 1 === index) dot.classList.add('active');
+        else dot.classList.remove('active');
+      });
+
+      currentSlide = index;
+
+      // Update speaker notes
+      notesContent.innerHTML = speakerNotes[index];
+
+      // Update button state
+      btnPrev.disabled = (currentSlide === 1);
+      btnNext.disabled = (currentSlide === totalSlides);
+    }
+
+    // Next/Prev Buttons
+    btnPrev.addEventListener('click', () => navigateToSlide(currentSlide - 1));
+    btnNext.addEventListener('click', () => navigateToSlide(currentSlide + 1));
+
+    // Speaker Notes Toggle
+    btnSpeaker.addEventListener('click', () => {
+      notesPanel.classList.toggle('notes-hidden');
+      btnSpeaker.classList.toggle('btn-active');
+    });
+
+    // Fullscreen Toggle
+    btnFullscreen.addEventListener('click', () => {
+      const elem = document.documentElement;
+      if (!document.fullscreenElement) {
+        elem.requestFullscreen().then(() => {
+          btnFullscreen.innerHTML = '<i data-lucide="minimize"></i><span>Exit Fullscreen</span>';
+          lucide.createIcons();
+        }).catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen().then(() => {
+          btnFullscreen.innerHTML = '<i data-lucide="maximize"></i><span>Fullscreen</span>';
+          lucide.createIcons();
+        });
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        navigateToSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft') {
+        navigateToSlide(currentSlide - 1);
+      }
+    });
+
+    // Load initial notes
+    navigateToSlide(1);
+
+  </script>
+</body>
+</html>
